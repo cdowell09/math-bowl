@@ -5,7 +5,7 @@
 }
 
 body {
-  font-family: 'Comic Sans MS', 'Chalkboard', 'Comic Neue', cursive, sans-serif;
+  font-family: 'Comic Neue', 'Comic Sans MS', 'Chalkboard', sans-serif;
   background: linear-gradient(135deg, #1e5aa8 0%, #0d3d6e 100%);
   min-height: 100vh;
   padding: 20px;
