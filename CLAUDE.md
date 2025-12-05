@@ -26,11 +26,28 @@ This is a React + TypeScript + Vite app for practicing Mental Math Bowl competit
 - **ProblemType**: Category of problems with a `generate()` function that creates Problems
 - **GradeConfig**: Grade-level configuration containing an array of ProblemTypes
 
+### Components (`src/components/`)
+
+- **GradeSelector**: Grid of grade buttons (1-5)
+- **ProblemTypeSelector**: "Surprise Me" button + grid of problem type cards
+- **Quiz**: Displays 10 problems with answer inputs
+- **Results**: Score display with correct/incorrect breakdown
+- **Celebration**: Flying animal animation for perfect scores
+
 ### Data Flow
 
 1. `App.tsx` holds the `grades` array - add new GradeConfigs here
 2. User selects Grade → ProblemType → takes Quiz (10 problems)
 3. Each ProblemType has a `generate()` function that returns a randomized Problem
+
+### Styling (`src/index.css`)
+
+Plain CSS with responsive breakpoints:
+- **1024px+**: Large desktop (3-column grade grid)
+- **769px+**: Desktop/large tablet (2-column grids)
+- **481-768px**: Tablet portrait
+- **480px and below**: Mobile (stacked layout)
+- **360px and below**: Very small mobile
 
 ### Adding New Grades
 
