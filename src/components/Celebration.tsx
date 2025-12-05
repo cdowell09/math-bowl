@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-const ANIMALS = ['🐶', '🦄', '🦕', '🐙'];
+const ANIMALS = ['🐶', '🦄', '🦕', '🐙', '🐰'];
 
 export function Celebration() {
   const [animal] = useState(() => ANIMALS[Math.floor(Math.random() * ANIMALS.length)]);
