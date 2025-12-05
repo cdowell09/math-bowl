@@ -127,13 +127,209 @@ p {
   background: #ddd;
 }
 
+/* Settings Button */
+.settings-button {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: #eee;
+  border: none;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  color: #666;
+}
+
+.settings-button:hover {
+  background: #ddd;
+  transform: scale(1.05);
+}
+
+.settings-button svg {
+  width: 24px;
+  height: 24px;
+}
+
+.timer-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: linear-gradient(135deg, #ff8c00 0%, #f57c00 100%);
+  color: white;
+  font-size: 0.6rem;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 8px;
+}
+
 /* Quiz */
 .quiz {
   text-align: center;
 }
 
+.quiz-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.quiz-header .back-button {
+  margin-bottom: 0;
+}
+
 .quiz-instructions {
   margin-bottom: 32px;
+}
+
+/* Timer Display */
+.timer-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #1e5aa8 0%, #2d7dd2 100%);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 1.25rem;
+  font-weight: bold;
+  font-family: inherit;
+}
+
+.timer-display.warning {
+  background: linear-gradient(135deg, #ff8c00 0%, #f57c00 100%);
+  animation: pulse 0.5s ease-in-out infinite;
+}
+
+.timer-display.critical {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  animation: pulse 0.3s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.timer-icon {
+  opacity: 0.8;
+  font-size: 0.9rem;
+}
+
+.timer-value {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Timer Toggle */
+.timer-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f8f9fa;
+  border: 2px solid #dee2e6;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 24px;
+  gap: 12px;
+}
+
+.timer-toggle--active {
+  background: #e8f4fd;
+  border-color: #1e5aa8;
+}
+
+.timer-toggle-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  flex: 1;
+}
+
+.timer-toggle-info:hover .timer-toggle-edit {
+  opacity: 1;
+}
+
+.timer-toggle-icon {
+  display: flex;
+  align-items: center;
+  color: #666;
+}
+
+.timer-toggle--active .timer-toggle-icon {
+  color: #1e5aa8;
+}
+
+.timer-toggle-label {
+  font-size: 1rem;
+  color: #333;
+}
+
+.timer-toggle-label strong {
+  color: #1e5aa8;
+}
+
+.timer-toggle-edit {
+  font-size: 0.85rem;
+  color: #1e5aa8;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.timer-toggle-switch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+}
+
+.timer-toggle-switch-track {
+  width: 44px;
+  height: 24px;
+  background: #ccc;
+  border-radius: 12px;
+  position: relative;
+  transition: background 0.2s;
+}
+
+.timer-toggle-switch--on .timer-toggle-switch-track {
+  background: linear-gradient(135deg, #1e5aa8 0%, #2d7dd2 100%);
+}
+
+.timer-toggle-switch-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.timer-toggle-switch--on .timer-toggle-switch-thumb {
+  transform: translateX(20px);
+}
+
+.timer-toggle-switch-label {
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: #999;
+  min-width: 28px;
+}
+
+.timer-toggle-switch--on .timer-toggle-switch-label {
+  color: #1e5aa8;
 }
 
 .problems-list {
@@ -490,6 +686,23 @@ p {
     margin-bottom: 20px;
   }
 
+  /* Timer Toggle on mobile */
+  .timer-toggle {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .timer-toggle-info {
+    justify-content: center;
+  }
+
+  .timer-toggle-switch {
+    justify-content: center;
+    padding: 8px 0;
+  }
+
   /* Use 2 columns for grades on mobile - they're small buttons */
   .grade-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -733,5 +946,743 @@ p {
 
   .animal-emoji {
     font-size: 2.5rem;
+  }
+}
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+/* Settings Modal */
+.settings-modal {
+  background: white;
+  border-radius: 24px;
+  padding: 32px;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.settings-modal h2 {
+  margin-bottom: 24px;
+}
+
+.settings-label {
+  display: block;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8px;
+  text-align: left;
+}
+
+.timer-mode-section {
+  margin-bottom: 24px;
+}
+
+.timer-mode-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.mode-button {
+  flex: 1;
+  padding: 12px 8px;
+  border: 2px solid #ddd;
+  border-radius: 12px;
+  background: white;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mode-button:hover {
+  border-color: #1e5aa8;
+  color: #1e5aa8;
+}
+
+.mode-button.active {
+  background: linear-gradient(135deg, #1e5aa8 0%, #2d7dd2 100%);
+  border-color: #1e5aa8;
+  color: white;
+}
+
+.timer-config-section {
+  margin-bottom: 24px;
+}
+
+.number-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.number-input {
+  width: 80px;
+  padding: 12px;
+  font-size: 1.25rem;
+  border: 3px solid #1e5aa8;
+  border-radius: 12px;
+  text-align: center;
+  font-family: inherit;
+}
+
+.number-input:focus {
+  outline: none;
+  border-color: #ff8c00;
+  box-shadow: 0 0 0 4px rgba(255, 140, 0, 0.2);
+}
+
+.input-hint {
+  font-size: 0.9rem;
+  color: #888;
+}
+
+.timer-info {
+  background: #fff3cd;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 0.9rem;
+  color: #856404;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.modal-button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.modal-button:hover {
+  transform: scale(1.05);
+}
+
+.modal-button.cancel {
+  background: #eee;
+  color: #666;
+}
+
+.modal-button.save {
+  background: linear-gradient(135deg, #ff8c00 0%, #f57c00 100%);
+  color: white;
+}
+
+/* Timed Results */
+.timed-results {
+  background: #e8f4fd;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.timed-results h3 {
+  font-size: 1.1rem;
+  color: #1e5aa8;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.timing-stats {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.stat-value {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #1e5aa8;
+}
+
+.timeout-stat .stat-value {
+  color: #dc3545;
+}
+
+/* Mobile responsive for timer/modal */
+@media (max-width: 480px) {
+  .settings-button {
+    width: 40px;
+    height: 40px;
+    top: 12px;
+    right: 12px;
+  }
+
+  .settings-button svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .timer-badge {
+    font-size: 0.55rem;
+    padding: 2px 4px;
+  }
+
+  .quiz-header {
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  .quiz-header .back-button {
+    flex: 1;
+    width: auto;
+  }
+
+  .timer-display {
+    padding: 8px 12px;
+    font-size: 1.1rem;
+  }
+
+  .settings-modal {
+    padding: 24px;
+    border-radius: 20px;
+  }
+
+  .timer-mode-buttons {
+    flex-direction: column;
+  }
+
+  .mode-button {
+    padding: 14px 12px;
+  }
+
+  .modal-buttons {
+    flex-direction: column;
+  }
+
+  .modal-button {
+    width: 100%;
+  }
+
+  .timing-stats {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+/* =================================
+   Print Worksheet Feature
+   ================================= */
+
+/* Card Print Button - small icon in corner */
+.card-print-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 8px;
+  padding: 8px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.2s;
+  opacity: 0.7;
+}
+
+.card-print-button:hover {
+  background: rgba(255, 255, 255, 0.4);
+  transform: scale(1.15);
+  opacity: 1;
+}
+
+/* Make cards position relative for absolute print button */
+.problem-type-card,
+.surprise-me-button {
+  position: relative;
+}
+
+/* Print Worksheet Button (Results page) */
+.print-worksheet-button {
+  background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+  border: none;
+  border-radius: 16px;
+  padding: 16px 32px;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.print-worksheet-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.print-worksheet-button--primary {
+  background: linear-gradient(135deg, #1e5aa8 0%, #2d7dd2 100%);
+}
+
+/* Print Worksheet Modal */
+.print-worksheet-modal {
+  max-width: 500px;
+}
+
+.print-worksheet-modal h2 {
+  margin-bottom: 8px;
+}
+
+.modal-subtitle {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #1e5aa8;
+  margin-bottom: 24px;
+}
+
+.modal-close-button {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #999;
+  line-height: 1;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+}
+
+.modal-close-button:hover {
+  color: #666;
+}
+
+/* Worksheet Options */
+.worksheet-options {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.option-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.option-label {
+  font-weight: bold;
+  color: #333;
+  font-size: 1rem;
+  text-align: left;
+}
+
+/* Problem Count Selector */
+.problem-count-selector {
+  display: flex;
+  gap: 12px;
+}
+
+.count-option {
+  flex: 1;
+  padding: 14px 8px;
+  border: 3px solid #1e5aa8;
+  border-radius: 12px;
+  background: white;
+  font-family: inherit;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #1e5aa8;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.count-option:hover {
+  background: #e8f0fe;
+}
+
+.count-option--selected {
+  background: linear-gradient(135deg, #1e5aa8 0%, #2d7dd2 100%);
+  color: white;
+  border-color: #1e5aa8;
+}
+
+/* Checkbox Label */
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  text-align: left;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  accent-color: #1e5aa8;
+}
+
+/* Generate Button */
+.generate-worksheet-button {
+  background: linear-gradient(135deg, #ff8c00 0%, #f57c00 100%);
+  border: none;
+  border-radius: 16px;
+  padding: 18px 32px;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform 0.2s, box-shadow 0.2s;
+  width: 100%;
+}
+
+.generate-worksheet-button:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Worksheet Preview */
+.worksheet-preview-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.worksheet-preview {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 40px 48px;
+  border: 2px dashed #dee2e6;
+  margin-bottom: 24px;
+}
+
+.worksheet-preview-content {
+  font-size: 0.9rem;
+}
+
+.worksheet-preview-header {
+  text-align: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.worksheet-preview-header h3 {
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.preview-name-line {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.worksheet-problems-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: left;
+}
+
+.preview-problem {
+  padding: 6px 0;
+  color: #333;
+}
+
+.preview-ellipsis {
+  color: #888;
+  font-style: italic;
+  padding: 8px 0;
+}
+
+.preview-answer-key-indicator {
+  margin-top: 16px;
+  padding: 8px 12px;
+  background: #d4edda;
+  border-radius: 8px;
+  color: #155724;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+/* Worksheet Actions */
+.worksheet-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.worksheet-actions .back-button {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.worksheet-actions .print-button {
+  flex: 2;
+  background: linear-gradient(135deg, #ff8c00 0%, #f57c00 100%);
+  border: none;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.worksheet-actions .print-button:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* =================================
+   Worksheet Subtitle
+   ================================= */
+
+.worksheet-subtitle {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #1e5aa8;
+  margin-bottom: 24px;
+}
+
+.worksheet-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.worksheet-checkbox-label input[type="checkbox"] {
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  accent-color: #1e5aa8;
+}
+
+/* =================================
+   Print View (Hidden on screen)
+   ================================= */
+
+.worksheet-print-view {
+  display: none;
+}
+
+/* =================================
+   Print Styles
+   ================================= */
+
+@media print {
+  /* Hide everything except print view */
+  body {
+    background: white !important;
+    padding: 0 !important;
+    min-height: auto !important;
+  }
+
+  .app {
+    display: none !important;
+  }
+
+  .modal-overlay {
+    display: none !important;
+  }
+
+  .worksheet-print-view {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    background: white !important;
+  }
+
+  /* Print Page */
+  .print-page {
+    padding: 0.5in;
+    page-break-after: always;
+    background: white;
+  }
+
+  .print-page:last-child {
+    page-break-after: avoid;
+  }
+
+  /* Print Header */
+  .print-header {
+    text-align: center;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #333;
+  }
+
+  .print-title {
+    font-size: 24pt;
+    color: #000 !important;
+    margin-bottom: 16px;
+    font-family: 'Comic Neue', 'Comic Sans MS', sans-serif;
+  }
+
+  .print-name-line {
+    font-size: 14pt;
+    text-align: right;
+    color: #333;
+  }
+
+  /* Print Problems List */
+  .print-problems-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border: none;
+  }
+
+  .print-problems-list li {
+    border: none;
+    text-decoration: none;
+    list-style: none;
+  }
+
+  .print-problem {
+    display: flex;
+    align-items: center;
+    font-size: 16pt;
+    padding: 16px 0;
+    border: none;
+    text-decoration: none;
+  }
+
+  .print-problem-number {
+    min-width: 36px;
+    font-weight: bold;
+  }
+
+  .print-problem-display {
+    flex: 1;
+    border: none;
+    text-decoration: none;
+  }
+
+  .print-answer-blank {
+    display: inline-block;
+    min-width: 120px;
+    height: 1.2em;
+    border: none !important;
+    border-bottom: 1px solid #000 !important;
+    margin-left: 24px;
+    vertical-align: bottom;
+  }
+
+  /* Answer Key Page */
+  .answer-key-page {
+    page-break-before: always;
+  }
+
+  .print-answers-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    columns: 2;
+    column-gap: 32px;
+  }
+
+  .print-answer {
+    display: flex;
+    align-items: center;
+    font-size: 12pt;
+    padding: 8px 0;
+    break-inside: avoid;
+    gap: 8px;
+  }
+
+  .print-answer .print-problem-number {
+    min-width: 28px;
+  }
+
+  .print-answer .print-problem-display {
+    flex: 1;
+  }
+
+  .print-answer-value {
+    font-weight: bold;
+    color: #000;
+  }
+}
+
+/* =================================
+   Mobile Responsive for Worksheet
+   ================================= */
+
+@media (max-width: 480px) {
+  .card-print-button {
+    padding: 6px;
+    top: 8px;
+    right: 8px;
+  }
+
+  .print-worksheet-button {
+    width: 100%;
+    padding: 16px 24px;
+    font-size: 1.15rem;
+  }
+
+  .print-worksheet-modal {
+    padding: 24px;
+    border-radius: 20px;
+  }
+
+  .problem-count-selector {
+    flex-wrap: wrap;
+  }
+
+  .count-option {
+    flex: 1 1 40%;
+    padding: 12px 8px;
+    font-size: 1.1rem;
+  }
+
+  .worksheet-actions {
+    flex-direction: column;
+  }
+
+  .worksheet-actions .back-button,
+  .worksheet-actions .print-button {
+    width: 100%;
   }
 }

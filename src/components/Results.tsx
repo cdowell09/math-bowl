@@ -1,5 +1,9 @@
-import { Problem } from '../types';
+import { GradeConfig, Problem, ProblemType } from '../types';
+import { TimedQuizResults } from '../types/timer';
+import { WorksheetModalContext } from '../types/worksheet';
 import { Celebration } from './Celebration';
+import { TimedResults } from './TimedResults';
+import { PrintWorksheetButton } from './worksheet';
 
 interface ResultsProps {
   score: number;
@@ -8,9 +12,13 @@ interface ResultsProps {
   answers: (number | null)[];
   onTryAgain: () => void;
   onBack: () => void;
+  timing?: TimedQuizResults;
+  onPrintWorksheet: (context: WorksheetModalContext) => void;
+  grade: GradeConfig;
+  problemType: ProblemType;
 }
 
-export function Results({ score, total, problems, answers, onTryAgain, onBack }: ResultsProps) {
+export function Results({ score, total, problems, answers, onTryAgain, onBack, timing, onPrintWorksheet, grade, problemType }: ResultsProps) {
   const percentage = Math.round((score / total) * 100);
 
   const getMessage = () => {
@@ -57,10 +65,22 @@ export function Results({ score, total, problems, answers, onTryAgain, onBack }:
         })}
       </div>
 
+      {timing && <TimedResults timing={timing} problemCount={total} />}
+
       <div className="results-buttons">
         <button className="try-again-button" onClick={onTryAgain}>
           Try Again
         </button>
+        <PrintWorksheetButton
+          onClick={() =>
+            onPrintWorksheet({
+              source: 'results',
+              grade,
+              problemType,
+              existingProblems: problems,
+            })
+          }
+        />
         <button className="back-button" onClick={onBack}>
           Choose Different Problems
         </button>
