@@ -2,7 +2,7 @@
 
 A kid-friendly web app for practicing mental math problems based on the Mental Math Bowl competition (Grades 1-5). Features a responsive design that works on desktop, tablet, and mobile devices.
 
-**Live Site:** https://math-bowl-1bqsiufdh-christians-projects-9b7c1ddf.vercel.app
+**Live Site:** https://math-bowl.vercel.app
 
 ## Getting Started
 
