@@ -50,13 +50,15 @@ export function Quiz({ problemType, onComplete, onBack }: QuizProps) {
       <div className="problems-list">
         {problems.map((problem, index) => (
           <div key={problem.id} className="problem-row">
-            <span className="problem-number">{index + 1}.</span>
+            <div className="problem-header">
+              <span className="problem-number">{index + 1}.</span>
+              {isSurpriseMe(problemType) && (
+                <span className="problem-category">{problem.typeName}</span>
+              )}
+            </div>
             <span className="problem-display">
               {problem.display}
             </span>
-            {isSurpriseMe(problemType) && (
-              <span className="problem-category">{problem.typeName}</span>
-            )}
             <input
               type="text"
               inputMode="numeric"

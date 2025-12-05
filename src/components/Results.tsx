@@ -37,8 +37,10 @@ export function Results({ score, total, problems, answers, onTryAgain, onBack }:
           const isCorrect = userAnswer !== null && Math.abs(userAnswer - problem.answer) < 0.001;
           return (
             <div key={problem.id} className={`result-row ${isCorrect ? 'correct' : 'incorrect'}`}>
-              <span className="result-icon">{isCorrect ? '✓' : '✗'}</span>
-              <span className="result-problem">{problem.display}</span>
+              <div className="result-main">
+                <span className="result-icon">{isCorrect ? '✓' : '✗'}</span>
+                <span className="result-problem">{problem.display}</span>
+              </div>
               <span className="result-answer">
                 {isCorrect ? (
                   <strong>{problem.answer}</strong>

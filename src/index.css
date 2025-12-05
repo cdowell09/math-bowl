@@ -9,6 +9,7 @@ body {
   background: linear-gradient(135deg, #1e5aa8 0%, #0d3d6e 100%);
   min-height: 100vh;
   padding: 20px;
+  padding: max(20px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
 }
 
 .app {
@@ -152,6 +153,10 @@ p {
   font-size: 1.4rem;
 }
 
+.problem-header {
+  display: contents;
+}
+
 .problem-number {
   font-weight: bold;
   color: #1e5aa8;
@@ -250,6 +255,10 @@ p {
   padding: 12px 16px;
   border-radius: 12px;
   font-size: 1.2rem;
+}
+
+.result-main {
+  display: contents;
 }
 
 .result-row.correct {
@@ -459,6 +468,7 @@ p {
 @media (max-width: 480px) {
   body {
     padding: 12px;
+    padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
   }
 
   .app {
@@ -480,22 +490,34 @@ p {
     margin-bottom: 20px;
   }
 
-  .grade-grid, .problem-type-grid {
+  /* Use 2 columns for grades on mobile - they're small buttons */
+  .grade-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .problem-type-grid {
     gap: 12px;
   }
 
-  .grade-card, .problem-type-card {
+  .grade-card {
+    padding: 16px;
+    font-size: 1.1rem;
+    border-radius: 12px;
+  }
+
+  .problem-type-card {
     padding: 18px;
     font-size: 1.25rem;
     border-radius: 12px;
   }
 
   .problem-type-name {
-    font-size: 1.25rem;
+    font-size: 1.15rem;
   }
 
   .problem-type-desc {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
   }
 
   .surprise-me-button {
@@ -504,39 +526,48 @@ p {
     border-radius: 12px;
   }
 
+  /* Stack problem rows vertically on mobile */
   .problem-row {
-    font-size: 1.1rem;
-    flex-wrap: wrap;
-    padding: 12px;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 14px;
     gap: 8px;
   }
 
+  .problem-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
   .problem-number {
-    min-width: 28px;
+    font-size: 0.95rem;
+    min-width: auto;
+    color: #666;
   }
 
   .problem-display {
-    min-width: 0;
-    word-break: break-word;
+    font-size: 1.35rem;
+    text-align: center;
+    padding: 6px 0;
+    font-weight: 500;
   }
 
   .problem-category {
-    font-size: 0.6rem;
-    padding: 3px 8px;
-    order: -1;
-    width: 100%;
-    text-align: center;
-    margin-bottom: 4px;
+    font-size: 0.7rem;
+    padding: 4px 10px;
+    margin: 0;
   }
 
   .answer-input {
-    width: 70px;
-    padding: 10px;
-    font-size: 1.1rem;
+    width: 100%;
+    padding: 14px;
+    font-size: 1.25rem;
+    border-radius: 10px;
   }
 
   .submit-button {
-    padding: 16px 32px;
+    padding: 18px 32px;
     font-size: 1.25rem;
     width: 100%;
   }
@@ -549,15 +580,35 @@ p {
     font-size: 1.5rem;
   }
 
+  /* Stack result rows on mobile */
   .result-row {
-    font-size: 1rem;
-    padding: 10px 12px;
-    flex-wrap: wrap;
-    gap: 8px;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 12px 14px;
+    gap: 4px;
+  }
+
+  .result-main {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
   }
 
   .result-icon {
-    font-size: 1.25rem;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+
+  .result-problem {
+    font-size: 1.05rem;
+    flex: 1;
+  }
+
+  .result-answer {
+    font-size: 0.95rem;
+    padding-left: 30px;
+    color: #555;
   }
 
   .results-buttons {
@@ -567,13 +618,15 @@ p {
 
   .try-again-button {
     width: 100%;
-    padding: 14px 24px;
-    font-size: 1.1rem;
+    padding: 16px 24px;
+    font-size: 1.15rem;
   }
 
   .back-button {
-    padding: 10px 16px;
-    font-size: 0.9rem;
+    padding: 12px 18px;
+    font-size: 1rem;
+    width: 100%;
+    text-align: center;
   }
 
   .animal-emoji {
@@ -601,36 +654,81 @@ p {
 @media (max-width: 360px) {
   body {
     padding: 8px;
+    padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
   }
 
   .app {
-    padding: 16px;
+    padding: 14px;
   }
 
   h1 {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
   }
 
   h2 {
-    font-size: 1.25rem;
+    font-size: 1.2rem;
   }
 
-  .grade-card, .problem-type-card {
+  .grade-card {
     padding: 14px;
+    font-size: 1rem;
+  }
+
+  .problem-type-card {
+    padding: 14px;
+  }
+
+  .problem-type-name {
+    font-size: 1rem;
+  }
+
+  .problem-type-desc {
+    font-size: 0.8rem;
+  }
+
+  .surprise-me-button {
+    padding: 14px 20px;
     font-size: 1.1rem;
   }
 
-  .problem-row {
-    font-size: 1rem;
+  .problem-display {
+    font-size: 1.15rem;
   }
 
   .answer-input {
-    width: 60px;
-    font-size: 1rem;
+    padding: 12px;
+    font-size: 1.15rem;
+  }
+
+  .submit-button {
+    padding: 16px 24px;
+    font-size: 1.1rem;
   }
 
   .score-display {
     font-size: 2rem;
+  }
+
+  .score-percent {
+    font-size: 1.25rem;
+  }
+
+  .result-problem {
+    font-size: 1rem;
+  }
+
+  .result-answer {
+    font-size: 0.95rem;
+  }
+
+  .try-again-button {
+    padding: 14px 20px;
+    font-size: 1.05rem;
+  }
+
+  .back-button {
+    padding: 10px 14px;
+    font-size: 0.95rem;
   }
 
   .animal-emoji {
