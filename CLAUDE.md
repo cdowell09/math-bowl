@@ -14,7 +14,12 @@ Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
 npm run dev      # Start dev server at http://localhost:5173
 npm run build    # Type-check and build for production
 npm run preview  # Preview production build
+npx vercel --prod  # Deploy to Vercel
 ```
+
+## Deployment
+
+Hosted on Vercel. Run `npx vercel --prod` to deploy changes.
 
 ## Architecture
 

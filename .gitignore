@@ -34,3 +34,4 @@ npm-debug.log*
 
 # Reference documents (optional - remove if you want to track)
 *.pdf
+.vercel
