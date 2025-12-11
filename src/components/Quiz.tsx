@@ -3,19 +3,23 @@ import { Problem, ProblemType } from '../types';
 import { TimerConfig, TimedQuizResults, DEFAULT_TIMER_CONFIG } from '../types/timer';
 import { useTimer } from '../hooks/useTimer';
 import { TimerDisplay } from './TimerDisplay';
+import { Theme } from '../hooks/useTheme';
+import { ThemeToggle } from './ThemeToggle';
 
 interface QuizProps {
   problemType: ProblemType;
   onComplete: (score: number, total: number, problems: Problem[], answers: (number | null)[], timing?: TimedQuizResults) => void;
   onBack: () => void;
   timerConfig?: TimerConfig;
+  theme: Theme;
+  onToggleTheme: () => void;
 }
 
 const QUIZ_SIZE = 10;
 
 const isSurpriseMe = (problemType: ProblemType) => problemType.id === 'surprise-me';
 
-export function Quiz({ problemType, onComplete, onBack, timerConfig }: QuizProps) {
+export function Quiz({ problemType, onComplete, onBack, timerConfig, theme, onToggleTheme }: QuizProps) {
   const [problems, setProblems] = useState<Problem[]>([]);
   const [answers, setAnswers] = useState<(string)[]>([]);
   const [hasStarted, setHasStarted] = useState(false);
@@ -95,15 +99,22 @@ export function Quiz({ problemType, onComplete, onBack, timerConfig }: QuizProps
 
   return (
     <div className="quiz">
-      <div className="quiz-header">
-        <button className="back-button" onClick={onBack}>← Back</button>
-        {timer.isTimerEnabled && (
-          <TimerDisplay
-            timeRemaining={timer.state.timeRemaining}
-            mode={config.mode}
-            formatTime={timer.formatTime}
-          />
-        )}
+      <div className="header-bar">
+        <div className="header-bar-left">
+          <button className="back-button" onClick={onBack}>← Back</button>
+        </div>
+        <div className="header-bar-center">
+          {timer.isTimerEnabled && (
+            <TimerDisplay
+              timeRemaining={timer.state.timeRemaining}
+              mode={config.mode}
+              formatTime={timer.formatTime}
+            />
+          )}
+        </div>
+        <div className="header-bar-right">
+          <ThemeToggle theme={theme} onToggle={onToggleTheme} />
+        </div>
       </div>
       <h2>{problemType.name}</h2>
       <p className="quiz-instructions">{problemType.description}</p>
