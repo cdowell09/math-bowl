@@ -20,6 +20,7 @@ Open http://localhost:5173
 - **Instant feedback** with score and corrections
 - **Celebration animation** for perfect scores
 - **Responsive design** for all screen sizes
+- **Deep links** like `/grade1` open a grade directly
 
 ### Grade 1
 - **Patterns** - Find the next number in the pattern
