@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import { GradeConfig, ProblemType, Problem } from './types';
 import { TimedQuizResults } from './types/timer';
 import { WorksheetModalContext } from './types/worksheet';
@@ -157,6 +158,7 @@ function App() {
     </div>
 
     <WorksheetPrintView worksheet={worksheet} />
+    <Analytics />
   </>
   );
 }
