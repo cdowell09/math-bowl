@@ -76,8 +76,10 @@ export function ProblemTypeSelector({ grade, onSelect, onBack, onPrintWorksheet,
         onOpenSettings={onOpenTimerSettings}
       />
 
-      <button className="surprise-me-button" onClick={handleSurpriseMe}>
-        Surprise Me!
+      <div className="surprise-me-wrapper">
+        <button className="surprise-me-button" onClick={handleSurpriseMe} type="button">
+          Surprise Me!
+        </button>
         <button
           className="card-print-button"
           onClick={handleSurpriseMePrint}
@@ -86,17 +88,19 @@ export function ProblemTypeSelector({ grade, onSelect, onBack, onPrintWorksheet,
         >
           <PrintIcon />
         </button>
-      </button>
+      </div>
 
       <div className="problem-type-grid">
         {grade.problemTypes.map((pt) => (
-          <button
-            key={pt.id}
-            className="problem-type-card"
-            onClick={() => onSelect(pt)}
-          >
-            <span className="problem-type-name">{pt.name}</span>
-            <span className="problem-type-desc">{pt.description}</span>
+          <div key={pt.id} className="problem-type-card-wrapper">
+            <button
+              className="problem-type-card"
+              onClick={() => onSelect(pt)}
+              type="button"
+            >
+              <span className="problem-type-name">{pt.name}</span>
+              <span className="problem-type-desc">{pt.description}</span>
+            </button>
             <button
               className="card-print-button"
               onClick={(e) => handlePrintClick(e, pt)}
@@ -105,7 +109,7 @@ export function ProblemTypeSelector({ grade, onSelect, onBack, onPrintWorksheet,
             >
               <PrintIcon />
             </button>
-          </button>
+          </div>
         ))}
       </div>
     </div>
