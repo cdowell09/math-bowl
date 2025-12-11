@@ -352,6 +352,14 @@ p {
 }
 
 /* Quiz uses the shared header-bar */
+.quiz .header-bar {
+  position: sticky;
+  top: env(safe-area-inset-top);
+  z-index: 10;
+  background: var(--color-app-surface);
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
 
 .quiz-instructions {
   margin-bottom: 32px;
