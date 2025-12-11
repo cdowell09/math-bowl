@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import { GradeConfig, ProblemType, Problem } from './types';
 import { TimedQuizResults } from './types/timer';
@@ -31,6 +31,27 @@ interface QuizResults {
   timing?: TimedQuizResults;
 }
 
+function getBasePath(): string {
+  if (typeof document === 'undefined') return '';
+  const baseHref = document.querySelector('base')?.getAttribute('href') ?? '/';
+  return baseHref.replace(/\/+$/, '');
+}
+
+function parseGradeFromPath(pathname: string): number | null {
+  const base = getBasePath();
+  const withoutBase = base && pathname.startsWith(base) ? pathname.slice(base.length) || '/' : pathname;
+  const clean = withoutBase.replace(/\/+$/, '');
+  const match = clean.match(/^\/grade-?(\d+)$/i);
+  if (!match) return null;
+  const gradeNum = parseInt(match[1], 10);
+  return Number.isFinite(gradeNum) ? gradeNum : null;
+}
+
+function withBase(path: string): string {
+  const base = getBasePath();
+  return `${base}${path}` || '/';
+}
+
 function App() {
   const [screen, setScreen] = useState<Screen>('grades');
   const [selectedGrade, setSelectedGrade] = useState<GradeConfig | null>(null);
@@ -53,11 +74,56 @@ function App() {
     onAfterPrint: closeWorksheetModal,
   });
 
+  const gradeByNumber = useMemo(() => {
+    const map = new Map<number, GradeConfig>();
+    for (const g of grades) map.set(g.grade, g);
+    return map;
+  }, []);
+
+  const applyPathToState = (pathname: string, replaceHistory = false) => {
+    const gradeNum = parseGradeFromPath(pathname);
+    const grade = gradeNum ? gradeByNumber.get(gradeNum) ?? null : null;
+
+    if (grade) {
+      setSelectedGrade(grade);
+      setSelectedProblemType(null);
+      setQuizResults(null);
+      setScreen('problemTypes');
+      if (replaceHistory) {
+        window.history.replaceState(null, '', withBase(`/grade${grade.grade}`));
+      }
+      return;
+    }
+
+    setSelectedGrade(null);
+    setSelectedProblemType(null);
+    setQuizResults(null);
+    setScreen('grades');
+    if (replaceHistory) {
+      window.history.replaceState(null, '', withBase('/'));
+    }
+  };
+
+  const pushPath = (path: string) => {
+    const next = withBase(path);
+    if (window.location.pathname !== next) {
+      window.history.pushState(null, '', next);
+    }
+  };
+
+  useEffect(() => {
+    applyPathToState(window.location.pathname, true);
+    const onPopState = () => applyPathToState(window.location.pathname, false);
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
+
   const handleOpenWorksheetModal = (context: WorksheetModalContext) => {
     openWorksheetModal(context);
   };
 
   const handleGradeSelect = (grade: GradeConfig) => {
+    pushPath(`/grade${grade.grade}`);
     setSelectedGrade(grade);
     setScreen('problemTypes');
   };
@@ -77,6 +143,7 @@ function App() {
   };
 
   const handleBackToGrades = () => {
+    pushPath('/');
     setSelectedGrade(null);
     setSelectedProblemType(null);
     setQuizResults(null);
@@ -84,6 +151,9 @@ function App() {
   };
 
   const handleBackToProblemTypes = () => {
+    if (selectedGrade) {
+      pushPath(`/grade${selectedGrade.grade}`);
+    }
     setSelectedProblemType(null);
     setQuizResults(null);
     setScreen('problemTypes');
