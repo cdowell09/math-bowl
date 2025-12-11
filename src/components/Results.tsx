@@ -1,9 +1,12 @@
 import { GradeConfig, Problem, ProblemType } from '../types';
-import { TimedQuizResults } from '../types/timer';
+import { TimerConfig, TimedQuizResults } from '../types/timer';
 import { WorksheetModalContext } from '../types/worksheet';
 import { Celebration } from './Celebration';
 import { TimedResults } from './TimedResults';
+import { TimerToggle } from './TimerToggle';
 import { PrintWorksheetButton } from './worksheet';
+import { Theme } from '../hooks/useTheme';
+import { ThemeToggle } from './ThemeToggle';
 
 interface ResultsProps {
   score: number;
@@ -16,9 +19,14 @@ interface ResultsProps {
   onPrintWorksheet: (context: WorksheetModalContext) => void;
   grade: GradeConfig;
   problemType: ProblemType;
+  timerConfig: TimerConfig;
+  onTimerToggle: () => void;
+  onOpenTimerSettings: () => void;
+  theme: Theme;
+  onToggleTheme: () => void;
 }
 
-export function Results({ score, total, problems, answers, onTryAgain, onBack, timing, onPrintWorksheet, grade, problemType }: ResultsProps) {
+export function Results({ score, total, problems, answers, onTryAgain, onBack, timing, onPrintWorksheet, grade, problemType, timerConfig, onTimerToggle, onOpenTimerSettings, theme, onToggleTheme }: ResultsProps) {
   const percentage = Math.round((score / total) * 100);
 
   const getMessage = () => {
@@ -30,6 +38,22 @@ export function Results({ score, total, problems, answers, onTryAgain, onBack, t
 
   return (
     <div className="results">
+      <div className="header-bar">
+        <div className="header-bar-left">
+          <button className="back-button" onClick={onBack}>← Back</button>
+        </div>
+        <div className="header-bar-center">
+          <TimerToggle
+            config={timerConfig}
+            onToggle={onTimerToggle}
+            onOpenSettings={onOpenTimerSettings}
+          />
+        </div>
+        <div className="header-bar-right">
+          <ThemeToggle theme={theme} onToggle={onToggleTheme} />
+        </div>
+      </div>
+
       {percentage === 100 && <Celebration />}
       <h2>{getMessage()}</h2>
       <div className="score-display">
@@ -81,9 +105,6 @@ export function Results({ score, total, problems, answers, onTryAgain, onBack, t
             })
           }
         />
-        <button className="back-button" onClick={onBack}>
-          Choose Different Problems
-        </button>
       </div>
     </div>
   );

@@ -17,6 +17,7 @@ import { PrintWorksheetModal, WorksheetPrintView } from './components/worksheet'
 import { useTimerSettings } from './hooks/useTimerSettings';
 import { useWorksheetModal } from './hooks/useWorksheetModal';
 import { usePrint } from './hooks/usePrint';
+import { useTheme } from './hooks/useTheme';
 
 // Add more grades here as you implement them
 const grades: GradeConfig[] = [grade1, grade2, grade3, grade4, grade5];
@@ -53,6 +54,7 @@ function withBase(path: string): string {
 }
 
 function App() {
+  const { theme, toggleTheme } = useTheme();
   const [screen, setScreen] = useState<Screen>('grades');
   const [selectedGrade, setSelectedGrade] = useState<GradeConfig | null>(null);
   const [selectedProblemType, setSelectedProblemType] = useState<ProblemType | null>(null);
@@ -169,6 +171,8 @@ function App() {
           timerConfig={timerConfig}
           onTimerToggle={toggleTimer}
           onOpenTimerSettings={() => setShowTimerSettings(true)}
+          theme={theme}
+          onToggleTheme={toggleTheme}
         />
       )}
 
@@ -181,6 +185,8 @@ function App() {
           timerConfig={timerConfig}
           onTimerToggle={toggleTimer}
           onOpenTimerSettings={() => setShowTimerSettings(true)}
+          theme={theme}
+          onToggleTheme={toggleTheme}
         />
       )}
 
@@ -190,6 +196,8 @@ function App() {
           onComplete={handleQuizComplete}
           onBack={handleBackToProblemTypes}
           timerConfig={timerConfig}
+          theme={theme}
+          onToggleTheme={toggleTheme}
         />
       )}
 
@@ -205,6 +213,11 @@ function App() {
           onPrintWorksheet={handleOpenWorksheetModal}
           grade={selectedGrade}
           problemType={selectedProblemType}
+          timerConfig={timerConfig}
+          onTimerToggle={toggleTimer}
+          onOpenTimerSettings={() => setShowTimerSettings(true)}
+          theme={theme}
+          onToggleTheme={toggleTheme}
         />
       )}
 

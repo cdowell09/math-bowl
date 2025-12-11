@@ -2,6 +2,8 @@ import { GradeConfig, ProblemType } from '../types';
 import { TimerConfig } from '../types/timer';
 import { WorksheetModalContext } from '../types/worksheet';
 import { TimerToggle } from './TimerToggle';
+import { Theme } from '../hooks/useTheme';
+import { ThemeToggle } from './ThemeToggle';
 
 interface ProblemTypeSelectorProps {
   grade: GradeConfig;
@@ -11,6 +13,8 @@ interface ProblemTypeSelectorProps {
   timerConfig: TimerConfig;
   onTimerToggle: () => void;
   onOpenTimerSettings: () => void;
+  theme: Theme;
+  onToggleTheme: () => void;
 }
 
 function PrintIcon() {
@@ -23,7 +27,7 @@ function PrintIcon() {
   );
 }
 
-export function ProblemTypeSelector({ grade, onSelect, onBack, onPrintWorksheet, timerConfig, onTimerToggle, onOpenTimerSettings }: ProblemTypeSelectorProps) {
+export function ProblemTypeSelector({ grade, onSelect, onBack, onPrintWorksheet, timerConfig, onTimerToggle, onOpenTimerSettings, theme, onToggleTheme }: ProblemTypeSelectorProps) {
   const handleSurpriseMe = () => {
     const surpriseProblemType: ProblemType = {
       id: 'surprise-me',
@@ -66,15 +70,24 @@ export function ProblemTypeSelector({ grade, onSelect, onBack, onPrintWorksheet,
 
   return (
     <div className="problem-type-selector">
-      <button className="back-button" onClick={onBack}>← Back</button>
+      <div className="header-bar">
+        <div className="header-bar-left">
+          <button className="back-button" onClick={onBack}>← Back</button>
+        </div>
+        <div className="header-bar-center">
+          <TimerToggle
+            config={timerConfig}
+            onToggle={onTimerToggle}
+            onOpenSettings={onOpenTimerSettings}
+          />
+        </div>
+        <div className="header-bar-right">
+          <ThemeToggle theme={theme} onToggle={onToggleTheme} />
+        </div>
+      </div>
+
       <h2>{grade.name}</h2>
       <p>Choose what to practice:</p>
-
-      <TimerToggle
-        config={timerConfig}
-        onToggle={onTimerToggle}
-        onOpenSettings={onOpenTimerSettings}
-      />
 
       <div className="surprise-me-wrapper">
         <button className="surprise-me-button" onClick={handleSurpriseMe} type="button">
