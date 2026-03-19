@@ -3,7 +3,7 @@ import type { TutorResponse } from '../../types/tutor';
 
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 export const DEFAULT_OPENROUTER_MODEL = 'stepfun/step-3.5-flash:free';
-const DEFAULT_TIMEOUT_MS = 8000;
+const DEFAULT_TIMEOUT_MS = 20000;
 
 export function createOpenRouterHeaders(apiKey: string) {
   return {
@@ -19,6 +19,12 @@ export function getOpenRouterModel(): string {
   return model ? model : DEFAULT_OPENROUTER_MODEL;
 }
 
+export function getOpenRouterTimeoutMs(): number {
+  const raw = process.env.OPENROUTER_TIMEOUT_MS?.trim();
+  const parsed = raw ? Number.parseInt(raw, 10) : Number.NaN;
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : DEFAULT_TIMEOUT_MS;
+}
+
 export async function requestOpenRouterTutor(
   prompt: TutorPrompt,
   options: { timeoutMs?: number; fetchImpl?: typeof fetch } = {}
@@ -29,7 +35,7 @@ export async function requestOpenRouterTutor(
   }
 
   const fetchImpl = options.fetchImpl ?? fetch;
-  const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+  const timeoutMs = options.timeoutMs ?? getOpenRouterTimeoutMs();
   const controller = new AbortController();
   let timeoutId: ReturnType<typeof setTimeout> | undefined;
   const timeoutToken = Symbol('openrouter-timeout');

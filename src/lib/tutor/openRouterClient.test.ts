@@ -1,5 +1,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { createOpenRouterHeaders, getOpenRouterModel, requestOpenRouterTutor } from './openRouterClient';
+import {
+  createOpenRouterHeaders,
+  getOpenRouterModel,
+  getOpenRouterTimeoutMs,
+  requestOpenRouterTutor,
+} from './openRouterClient';
 
 describe('createOpenRouterHeaders', () => {
   it('creates the expected auth headers', () => {
@@ -24,6 +29,21 @@ describe('getOpenRouterModel', () => {
   it('allows a model override for deployment flexibility', () => {
     vi.stubEnv('OPENROUTER_MODEL', 'openai/gpt-4.1-mini');
     expect(getOpenRouterModel()).toBe('openai/gpt-4.1-mini');
+  });
+});
+
+describe('getOpenRouterTimeoutMs', () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it('defaults to a longer timeout for free-model latency', () => {
+    expect(getOpenRouterTimeoutMs()).toBe(20000);
+  });
+
+  it('allows an environment override', () => {
+    vi.stubEnv('OPENROUTER_TIMEOUT_MS', '12000');
+    expect(getOpenRouterTimeoutMs()).toBe(12000);
   });
 });
 

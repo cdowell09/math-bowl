@@ -36,9 +36,18 @@ export default async function handler(req: TutorApiRequest, res: TutorApiRespons
 
     try {
       const request = validateTutorRequest(req.body);
-      res.status(200).json(buildTutorFallback(request.correctAnswer));
+      res.status(200).json(buildTutorFallback(request));
     } catch {
-      res.status(200).json(buildTutorFallback(0));
+      res.status(200).json(
+        buildTutorFallback({
+          grade: 1,
+          problemType: 'Unknown',
+          problemDisplay: 'Unknown problem',
+          correctAnswer: 0,
+          studentAnswer: null,
+          messages: [],
+        })
+      );
     }
   }
 }
