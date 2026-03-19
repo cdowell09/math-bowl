@@ -1,7 +1,7 @@
-import { buildTutorFallback } from '../src/lib/tutor/fallback';
-import { buildTutorPrompt } from '../src/lib/tutor/prompt';
-import { requestOpenRouterTutor } from '../src/lib/tutor/openRouterClient';
-import { validateTutorRequest } from '../src/lib/tutor/validation';
+import { buildTutorFallback } from '../src/lib/tutor/fallback.js';
+import { buildTutorPrompt } from '../src/lib/tutor/prompt.js';
+import { requestOpenRouterTutor } from '../src/lib/tutor/openRouterClient.js';
+import { validateTutorRequest } from '../src/lib/tutor/validation.js';
 
 interface TutorApiRequest {
   method?: string;
