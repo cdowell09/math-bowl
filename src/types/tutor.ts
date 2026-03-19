@@ -15,9 +15,9 @@ export interface TutorRequest {
 }
 
 export interface TutorResponse {
-  summary?: string;
-  hint?: string;
-  nextQuestion?: string;
+  summary?: string | null;
+  hint?: string | null;
+  nextQuestion?: string | null;
   workedExample?: string | null;
   messages: TutorMessage[];
 }
