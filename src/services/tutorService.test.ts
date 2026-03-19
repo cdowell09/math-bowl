@@ -12,10 +12,10 @@ describe('requestTutor', () => {
       return new Response(
         JSON.stringify({
           summary: 'Let us try the first step.',
-          hint: null,
-          nextQuestion: null,
-          workedExample: null,
-          messages: [],
+          hint: 'Count on from the larger number.',
+          nextQuestion: 'What is 9 plus 4?',
+          workedExample: '9 + 4 = 13',
+          messages: [{ role: 'assistant', content: 'Let us try the first step.' }],
         }),
         {
           status: 200,
@@ -35,7 +35,7 @@ describe('requestTutor', () => {
       messages: [],
     };
 
-    await requestTutor(request);
+    const response = await requestTutor(request);
 
     expect(fetchSpy).toHaveBeenCalledWith(
       '/api/tutor',
@@ -46,5 +46,12 @@ describe('requestTutor', () => {
         }),
       })
     );
+    expect(response).toEqual({
+      summary: 'Let us try the first step.',
+      hint: 'Count on from the larger number.',
+      nextQuestion: 'What is 9 plus 4?',
+      workedExample: '9 + 4 = 13',
+      messages: [{ role: 'assistant', content: 'Let us try the first step.' }],
+    });
   });
 });
