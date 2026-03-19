@@ -1,4 +1,5 @@
 import type { TutorRequest } from '../../types/tutor';
+import { MAX_TUTOR_MESSAGES } from './validation';
 
 export interface TutorPrompt {
   system: string;
@@ -6,13 +7,15 @@ export interface TutorPrompt {
 }
 
 function formatTutorMessages(messages: TutorRequest['messages']): string {
-  if (messages.length === 0) {
+  const boundedMessages = messages.slice(-MAX_TUTOR_MESSAGES);
+
+  if (boundedMessages.length === 0) {
     return 'Conversation history: none';
   }
 
   return [
     'Conversation history:',
-    ...messages.map((message) => `${message.role.toUpperCase()}: ${message.content}`),
+    ...boundedMessages.map((message) => `${message.role.toUpperCase()}: ${message.content}`),
   ].join('\n');
 }
 

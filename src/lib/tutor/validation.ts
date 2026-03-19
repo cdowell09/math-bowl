@@ -4,6 +4,8 @@ function isTutorRole(value: unknown): value is TutorMessage['role'] {
   return value === 'user' || value === 'assistant';
 }
 
+export const MAX_TUTOR_MESSAGES = 6;
+
 export function validateTutorRequest(input: unknown): TutorRequest {
   if (!input || typeof input !== 'object') {
     throw new Error('Invalid tutor request');
@@ -60,7 +62,7 @@ export function validateTutorRequest(input: unknown): TutorRequest {
       role: normalized.role,
       content: normalized.content,
     };
-  });
+  }).slice(-MAX_TUTOR_MESSAGES);
 
   return {
     grade,

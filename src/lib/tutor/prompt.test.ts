@@ -33,4 +33,24 @@ describe('buildTutorPrompt', () => {
     expect(prompt.user).toContain("USER: I thought 6 goes into 24 six times.");
     expect(prompt.user).toContain('ASSISTANT: Let us count together one step at a time.');
   });
+
+  it('keeps the prompt history bounded to the latest tutor messages', () => {
+    const prompt = buildTutorPrompt({
+      grade: 5,
+      problemType: 'Solving for x',
+      problemDisplay: 'x + 4 = 9',
+      correctAnswer: 5,
+      studentAnswer: 7,
+      messages: Array.from({ length: 8 }, (_, index) => ({
+        role: index % 2 === 0 ? 'user' : 'assistant',
+        content: `message ${index + 1}`,
+      })),
+    });
+
+    expect(prompt.user).toContain('Conversation history:');
+    expect(prompt.user).not.toContain('message 1');
+    expect(prompt.user).not.toContain('message 2');
+    expect(prompt.user).toContain('USER: message 3');
+    expect(prompt.user).toContain('ASSISTANT: message 8');
+  });
 });

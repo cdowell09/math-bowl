@@ -3,7 +3,18 @@ import { buildTutorPrompt } from '../src/lib/tutor/prompt';
 import { requestOpenRouterTutor } from '../src/lib/tutor/openRouterClient';
 import { validateTutorRequest } from '../src/lib/tutor/validation';
 
-export default async function handler(req: any, res: any) {
+interface TutorApiRequest {
+  method?: string;
+  body: unknown;
+}
+
+interface TutorApiResponse {
+  setHeader(name: string, value: string): void;
+  status(code: number): TutorApiResponse;
+  json(body: unknown): void;
+}
+
+export default async function handler(req: TutorApiRequest, res: TutorApiResponse) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     res.status(405).json({ error: 'Method not allowed' });
