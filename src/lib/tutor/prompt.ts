@@ -5,6 +5,17 @@ export interface TutorPrompt {
   user: string;
 }
 
+function formatTutorMessages(messages: TutorRequest['messages']): string {
+  if (messages.length === 0) {
+    return 'Conversation history: none';
+  }
+
+  return [
+    'Conversation history:',
+    ...messages.map((message) => `${message.role.toUpperCase()}: ${message.content}`),
+  ].join('\n');
+}
+
 export function buildTutorPrompt(request: TutorRequest): TutorPrompt {
   return {
     system: [
@@ -20,7 +31,7 @@ export function buildTutorPrompt(request: TutorRequest): TutorPrompt {
       `Problem: ${request.problemDisplay}`,
       `Correct answer: ${request.correctAnswer}`,
       `Student answer: ${request.studentAnswer ?? 'No answer given'}`,
-      `Messages so far: ${request.messages.length}`,
+      formatTutorMessages(request.messages),
     ].join('\n'),
   };
 }
