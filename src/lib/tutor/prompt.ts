@@ -1,5 +1,5 @@
 import type { TutorRequest } from '../../types/tutor';
-import { MAX_TUTOR_MESSAGES } from './validation';
+import { MAX_TUTOR_MESSAGES } from './validation.js';
 
 export interface TutorPrompt {
   system: string;

@@ -1,4 +1,4 @@
-import type { TutorPrompt } from './prompt';
+import type { TutorPrompt } from './prompt.js';
 import type { TutorResponse } from '../../types/tutor';
 
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
