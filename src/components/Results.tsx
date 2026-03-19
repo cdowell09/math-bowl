@@ -1,12 +1,17 @@
 import { GradeConfig, Problem, ProblemType } from '../types';
 import { TimerConfig, TimedQuizResults } from '../types/timer';
 import { WorksheetModalContext } from '../types/worksheet';
+import { useState } from 'react';
 import { Celebration } from './Celebration';
 import { TimedResults } from './TimedResults';
 import { TimerToggle } from './TimerToggle';
 import { PrintWorksheetButton } from './worksheet';
 import { Theme } from '../hooks/useTheme';
 import { ThemeToggle } from './ThemeToggle';
+import { useProblemTutor } from '../hooks/useProblemTutor';
+import { ProblemTutorButton } from './ProblemTutorButton';
+import { TutorPanel } from './TutorPanel';
+import { isResultsTutorEnabled } from '../lib/tutor/featureFlags';
 
 interface ResultsProps {
   score: number;
@@ -27,6 +32,9 @@ interface ResultsProps {
 }
 
 export function Results({ score, total, problems, answers, onTryAgain, onBack, timing, onPrintWorksheet, grade, problemType, timerConfig, onTimerToggle, onOpenTimerSettings, theme, onToggleTheme }: ResultsProps) {
+  const tutor = useProblemTutor();
+  const [activeTutorProblemId, setActiveTutorProblemId] = useState<string | null>(null);
+  const tutorEnabled = isResultsTutorEnabled();
   const percentage = Math.round((score / total) * 100);
 
   const getMessage = () => {
@@ -63,48 +71,94 @@ export function Results({ score, total, problems, answers, onTryAgain, onBack, t
       </div>
       <p className="score-percent">{percentage}%</p>
 
-      <div className="results-list">
-        {problems.map((problem, index) => {
-          const userAnswer = answers[index];
-          const isCorrect = userAnswer !== null && Math.abs(userAnswer - problem.answer) < 0.001;
-          return (
-            <div key={problem.id} className={`result-row ${isCorrect ? 'correct' : 'incorrect'}`}>
-              <div className="result-main">
-                <span className="result-icon">{isCorrect ? '✓' : '✗'}</span>
-                <span className="result-problem">{problem.display}</span>
-              </div>
-              <span className="result-answer">
-                {isCorrect ? (
-                  <strong>{problem.answer}</strong>
-                ) : (
-                  <>
-                    <span className="wrong-answer">{answers[index] ?? '—'}</span>
-                    {' → '}
-                    <strong>{problem.answer}</strong>
-                  </>
-                )}
-              </span>
-            </div>
-          );
-        })}
-      </div>
+      <div className={`results-shell${tutorEnabled && tutor.isOpen ? ' results-shell--with-tutor' : ''}`}>
+        <div className="results-main">
+          <div className="results-list">
+            {problems.map((problem, index) => {
+              const userAnswer = answers[index];
+              const isCorrect = userAnswer !== null && Math.abs(userAnswer - problem.answer) < 0.001;
+              const isActiveProblem = activeTutorProblemId === problem.id;
 
-      {timing && <TimedResults timing={timing} problemCount={total} />}
+              return (
+                <div key={problem.id} className={`result-row ${isCorrect ? 'correct' : 'incorrect'}`}>
+                  <div className="result-main">
+                    <span className="result-icon">{isCorrect ? '✓' : '✗'}</span>
+                    <span className="result-problem">{problem.display}</span>
+                  </div>
+                  <div className="result-answer">
+                    {isCorrect ? (
+                      <strong>{problem.answer}</strong>
+                    ) : (
+                      <>
+                        <span className="wrong-answer">{answers[index] ?? '—'}</span>
+                        {' → '}
+                        <strong>{problem.answer}</strong>
+                      </>
+                    )}
+                  </div>
+                  {tutorEnabled && !isCorrect && (
+                    <ProblemTutorButton
+                      onClick={() => {
+                        setActiveTutorProblemId(problem.id);
+                        void tutor.openTutor({
+                          grade: grade.grade,
+                          problemType: problem.typeName || problemType.name,
+                          problemDisplay: problem.display,
+                          correctAnswer: problem.answer,
+                          studentAnswer: userAnswer,
+                        });
+                      }}
+                      isActive={isActiveProblem}
+                    />
+                  )}
+                </div>
+              );
+            })}
+          </div>
 
-      <div className="results-buttons">
-        <button className="try-again-button" onClick={onTryAgain}>
-          Try Again
-        </button>
-        <PrintWorksheetButton
-          onClick={() =>
-            onPrintWorksheet({
-              source: 'results',
-              grade,
-              problemType,
-              existingProblems: problems,
-            })
-          }
-        />
+          {timing && <TimedResults timing={timing} problemCount={total} />}
+
+          <div className="results-buttons">
+            <button className="try-again-button" onClick={onTryAgain}>
+              Try Again
+            </button>
+            <PrintWorksheetButton
+              onClick={() =>
+                onPrintWorksheet({
+                  source: 'results',
+                  grade,
+                  problemType,
+                  existingProblems: problems,
+                })
+              }
+            />
+          </div>
+        </div>
+
+        {tutorEnabled && (
+          <TutorPanel
+            isOpen={tutor.isOpen}
+            activeProblem={tutor.activeProblem}
+            response={tutor.response}
+            messages={tutor.messages}
+            isLoading={tutor.isLoading}
+            error={tutor.error}
+            onSendMessage={tutor.sendMessage}
+            onClose={() => {
+              setActiveTutorProblemId(null);
+              tutor.closeTutor();
+            }}
+            onReset={() => {
+              if (!tutor.activeProblem) {
+                setActiveTutorProblemId(null);
+                tutor.closeTutor();
+                return;
+              }
+
+              void tutor.resetTutor();
+            }}
+          />
+        )}
       </div>
     </div>
   );

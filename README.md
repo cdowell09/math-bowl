@@ -21,6 +21,7 @@ Open http://localhost:5173
 - **Celebration animation** for perfect scores
 - **Responsive design** for all screen sizes
 - **Deep links** like `/grade1` open a grade directly
+- **Optional tutor panel** on the results screen for missed problems
 
 ### Grade 1
 - **Patterns** - Find the next number in the pattern
@@ -81,3 +82,28 @@ export function generateMyProblem(): Problem {
 
 2. Add to grade config in `src/data/grades/grade{N}.ts`
 3. The new problem type will automatically appear in the UI
+
+## Results Tutor
+
+The results tutor is gated by an environment flag so rollout can stay controlled.
+
+1. Add these values to your local `.env` file:
+
+```bash
+OPENROUTER_API_KEY=your_openrouter_api_key
+OPENROUTER_MODEL=stepfun/step-3.5-flash:free
+VITE_ENABLE_RESULTS_TUTOR=true
+```
+
+2. For the full tutor flow, start the app with `npx vercel dev` so the `/api/tutor` route is available locally.
+3. If you only run `npm run dev`, you will still see the frontend, but the tutor panel cannot fetch responses because Vite does not serve the API route.
+4. Finish a quiz and open a missed problem from the `Results` screen to launch the tutor panel.
+
+If the provider times out or returns an invalid response, the backend falls back to a short safe explanation that still includes the correct answer.
+
+For validation, run:
+
+```bash
+npm test
+npm run build
+```
