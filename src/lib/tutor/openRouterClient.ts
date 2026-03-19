@@ -2,7 +2,7 @@ import type { TutorPrompt } from './prompt';
 import type { TutorResponse } from '../../types/tutor';
 
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
-const DEFAULT_MODEL = 'stepfun/step-3.5-flash:free';
+export const DEFAULT_OPENROUTER_MODEL = 'stepfun/step-3.5-flash:free';
 const DEFAULT_TIMEOUT_MS = 8000;
 
 export function createOpenRouterHeaders(apiKey: string) {
@@ -12,6 +12,11 @@ export function createOpenRouterHeaders(apiKey: string) {
     'HTTP-Referer': 'https://math-bowl.vercel.app',
     'X-Title': 'Math Bowl Tutor',
   };
+}
+
+export function getOpenRouterModel(): string {
+  const model = process.env.OPENROUTER_MODEL?.trim();
+  return model ? model : DEFAULT_OPENROUTER_MODEL;
 }
 
 export async function requestOpenRouterTutor(
@@ -36,7 +41,7 @@ export async function requestOpenRouterTutor(
         headers: createOpenRouterHeaders(apiKey),
         signal: controller.signal,
         body: JSON.stringify({
-          model: DEFAULT_MODEL,
+          model: getOpenRouterModel(),
           messages: [
             { role: 'system', content: prompt.system },
             { role: 'user', content: prompt.user },

@@ -11,6 +11,7 @@ import { ThemeToggle } from './ThemeToggle';
 import { useProblemTutor } from '../hooks/useProblemTutor';
 import { ProblemTutorButton } from './ProblemTutorButton';
 import { TutorPanel } from './TutorPanel';
+import { isResultsTutorEnabled } from '../lib/tutor/featureFlags';
 
 interface ResultsProps {
   score: number;
@@ -33,6 +34,7 @@ interface ResultsProps {
 export function Results({ score, total, problems, answers, onTryAgain, onBack, timing, onPrintWorksheet, grade, problemType, timerConfig, onTimerToggle, onOpenTimerSettings, theme, onToggleTheme }: ResultsProps) {
   const tutor = useProblemTutor();
   const [activeTutorProblemId, setActiveTutorProblemId] = useState<string | null>(null);
+  const tutorEnabled = isResultsTutorEnabled();
   const percentage = Math.round((score / total) * 100);
 
   const getMessage = () => {
@@ -69,7 +71,7 @@ export function Results({ score, total, problems, answers, onTryAgain, onBack, t
       </div>
       <p className="score-percent">{percentage}%</p>
 
-      <div className={`results-shell${tutor.isOpen ? ' results-shell--with-tutor' : ''}`}>
+      <div className={`results-shell${tutorEnabled && tutor.isOpen ? ' results-shell--with-tutor' : ''}`}>
         <div className="results-main">
           <div className="results-list">
             {problems.map((problem, index) => {
@@ -94,7 +96,7 @@ export function Results({ score, total, problems, answers, onTryAgain, onBack, t
                       </>
                     )}
                   </div>
-                  {!isCorrect && (
+                  {tutorEnabled && !isCorrect && (
                     <ProblemTutorButton
                       onClick={() => {
                         setActiveTutorProblemId(problem.id);
@@ -133,28 +135,30 @@ export function Results({ score, total, problems, answers, onTryAgain, onBack, t
           </div>
         </div>
 
-        <TutorPanel
-          isOpen={tutor.isOpen}
-          activeProblem={tutor.activeProblem}
-          response={tutor.response}
-          messages={tutor.messages}
-          isLoading={tutor.isLoading}
-          error={tutor.error}
-          onSendMessage={tutor.sendMessage}
-          onClose={() => {
-            setActiveTutorProblemId(null);
-            tutor.closeTutor();
-          }}
-          onReset={() => {
-            if (!tutor.activeProblem) {
+        {tutorEnabled && (
+          <TutorPanel
+            isOpen={tutor.isOpen}
+            activeProblem={tutor.activeProblem}
+            response={tutor.response}
+            messages={tutor.messages}
+            isLoading={tutor.isLoading}
+            error={tutor.error}
+            onSendMessage={tutor.sendMessage}
+            onClose={() => {
               setActiveTutorProblemId(null);
               tutor.closeTutor();
-              return;
-            }
+            }}
+            onReset={() => {
+              if (!tutor.activeProblem) {
+                setActiveTutorProblemId(null);
+                tutor.closeTutor();
+                return;
+              }
 
-            void tutor.resetTutor();
-          }}
-        />
+              void tutor.resetTutor();
+            }}
+          />
+        )}
       </div>
     </div>
   );

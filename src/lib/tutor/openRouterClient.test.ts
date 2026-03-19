@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { createOpenRouterHeaders, requestOpenRouterTutor } from './openRouterClient';
+import { createOpenRouterHeaders, getOpenRouterModel, requestOpenRouterTutor } from './openRouterClient';
 
 describe('createOpenRouterHeaders', () => {
   it('creates the expected auth headers', () => {
@@ -9,6 +9,21 @@ describe('createOpenRouterHeaders', () => {
         'Content-Type': 'application/json',
       })
     );
+  });
+});
+
+describe('getOpenRouterModel', () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it('defaults to the free tutor model', () => {
+    expect(getOpenRouterModel()).toBe('stepfun/step-3.5-flash:free');
+  });
+
+  it('allows a model override for deployment flexibility', () => {
+    vi.stubEnv('OPENROUTER_MODEL', 'openai/gpt-4.1-mini');
+    expect(getOpenRouterModel()).toBe('openai/gpt-4.1-mini');
   });
 });
 
