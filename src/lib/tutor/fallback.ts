@@ -37,12 +37,111 @@ function buildPatternFallback(request: TutorRequest): TutorResponse | null {
   };
 }
 
+function buildSolvingForXFallback(request: TutorRequest): TutorResponse | null {
+  const display = request.problemDisplay.replace(/\s+/g, ' ').trim();
+
+  const axPlusB = display.match(/^(\d+)x \+ (\d+) = (\d+)$/);
+  if (axPlusB) {
+    const [, aText, bText, cText] = axPlusB;
+    const a = Number(aText);
+    const b = Number(bText);
+    const c = Number(cText);
+    const afterSubtract = c - b;
+
+    return {
+      summary: `Start by undoing the + ${b}. Subtract ${b} from both sides so ${a}x = ${afterSubtract}. Then divide both sides by ${a}, so x = ${request.correctAnswer}.`,
+      hint: `If you subtract ${b} from ${c}, what do you get?`,
+      nextQuestion: `After you get ${a}x = ${afterSubtract}, what is ${afterSubtract} divided by ${a}?`,
+      workedExample: null,
+      messages: [
+        {
+          role: 'assistant',
+          content: `Start by undoing the + ${b}. Subtract ${b} from both sides so ${a}x = ${afterSubtract}. Then divide both sides by ${a}, so x = ${request.correctAnswer}.`,
+        },
+      ],
+    };
+  }
+
+  const axMinusB = display.match(/^(\d+)x - (\d+) = (\d+)$/);
+  if (axMinusB) {
+    const [, aText, bText, cText] = axMinusB;
+    const a = Number(aText);
+    const b = Number(bText);
+    const c = Number(cText);
+    const afterAdd = c + b;
+
+    return {
+      summary: `Start by undoing the - ${b}. Add ${b} to both sides so ${a}x = ${afterAdd}. Then divide both sides by ${a}, so x = ${request.correctAnswer}.`,
+      hint: `If you add ${b} to ${c}, what do you get?`,
+      nextQuestion: `After you get ${a}x = ${afterAdd}, what is ${afterAdd} divided by ${a}?`,
+      workedExample: null,
+      messages: [
+        {
+          role: 'assistant',
+          content: `Start by undoing the - ${b}. Add ${b} to both sides so ${a}x = ${afterAdd}. Then divide both sides by ${a}, so x = ${request.correctAnswer}.`,
+        },
+      ],
+    };
+  }
+
+  const bPlusAx = display.match(/^(\d+) \+ (\d+)x = (\d+)$/);
+  if (bPlusAx) {
+    const [, bText, aText, cText] = bPlusAx;
+    const a = Number(aText);
+    const b = Number(bText);
+    const c = Number(cText);
+    const afterSubtract = c - b;
+
+    return {
+      summary: `Start by undoing the + ${b}. Subtract ${b} from both sides so ${a}x = ${afterSubtract}. Then divide both sides by ${a}, so x = ${request.correctAnswer}.`,
+      hint: `What is ${c} - ${b}?`,
+      nextQuestion: `After that, what is ${afterSubtract} divided by ${a}?`,
+      workedExample: null,
+      messages: [
+        {
+          role: 'assistant',
+          content: `Start by undoing the + ${b}. Subtract ${b} from both sides so ${a}x = ${afterSubtract}. Then divide both sides by ${a}, so x = ${request.correctAnswer}.`,
+        },
+      ],
+    };
+  }
+
+  const cEqualsAxPlusB = display.match(/^(\d+) = (\d+)x \+ (\d+)$/);
+  if (cEqualsAxPlusB) {
+    const [, cText, aText, bText] = cEqualsAxPlusB;
+    const a = Number(aText);
+    const b = Number(bText);
+    const c = Number(cText);
+    const afterSubtract = c - b;
+
+    return {
+      summary: `Think of ${c} = ${a}x + ${b} as ${a}x + ${b} = ${c}. Subtract ${b} from both sides so ${a}x = ${afterSubtract}. Then divide both sides by ${a}, so x = ${request.correctAnswer}.`,
+      hint: `What is ${c} - ${b}?`,
+      nextQuestion: `After you get ${a}x = ${afterSubtract}, what is ${afterSubtract} divided by ${a}?`,
+      workedExample: null,
+      messages: [
+        {
+          role: 'assistant',
+          content: `Think of ${c} = ${a}x + ${b} as ${a}x + ${b} = ${c}. Subtract ${b} from both sides so ${a}x = ${afterSubtract}. Then divide both sides by ${a}, so x = ${request.correctAnswer}.`,
+        },
+      ],
+    };
+  }
+
+  return null;
+}
+
 export function buildTutorFallback(request: TutorRequest): TutorResponse {
   const problemType = request.problemType.trim().toLowerCase();
   const patternFallback = problemType.includes('pattern') ? buildPatternFallback(request) : null;
+  const solvingForXFallback = problemType.includes('solving for x') ? buildSolvingForXFallback(request) : null;
 
   if (patternFallback) {
     return patternFallback;
+  }
+
+  if (solvingForXFallback) {
+    return solvingForXFallback;
   }
 
   return {

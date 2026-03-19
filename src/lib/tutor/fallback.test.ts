@@ -31,4 +31,20 @@ describe('buildTutorFallback', () => {
     expect(response.summary).not.toContain('go up by');
     expect(response.summary).not.toContain('go down by');
   });
+
+  it('gives a useful explanation for solving for x problems', () => {
+    const response = buildTutorFallback({
+      grade: 5,
+      problemType: 'Solving for x',
+      problemDisplay: '7x - 9 = 12',
+      correctAnswer: 3,
+      studentAnswer: 2,
+      messages: [],
+    });
+
+    expect(response.summary).toContain('Add 9 to both sides');
+    expect(response.summary).toContain('7x = 21');
+    expect(response.summary).toContain('x = 3');
+    expect(response.nextQuestion).toContain('21 divided by 7');
+  });
 });
