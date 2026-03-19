@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { GradeConfig, Problem, ProblemType } from '../types';
 import type { TimerConfig } from '../types/timer';
 import { Results } from './Results';
@@ -64,6 +64,11 @@ function renderResults() {
 describe('Results', () => {
   afterEach(() => {
     vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
+  });
+
+  beforeEach(() => {
+    vi.stubEnv('VITE_ENABLE_RESULTS_TUTOR', 'true');
   });
 
   it('shows a help button for each incorrect answer', () => {
