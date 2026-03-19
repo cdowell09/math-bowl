@@ -629,6 +629,10 @@ p {
   gap: 24px;
 }
 
+.results-shell--with-tutor {
+  align-items: stretch;
+}
+
 .results-main {
   flex: 1;
   min-width: 0;
@@ -1132,6 +1136,10 @@ p {
     gap: 18px;
   }
 
+  .results-shell--with-tutor {
+    padding-bottom: clamp(360px, 72vh, 620px);
+  }
+
   .tutor-panel {
     flex-basis: 320px;
     padding: 16px;
@@ -1309,6 +1317,10 @@ p {
 
   .results-shell {
     flex-direction: column;
+  }
+
+  .results-shell--with-tutor {
+    padding-bottom: clamp(360px, 72vh, 620px);
   }
 
   .tutor-panel {

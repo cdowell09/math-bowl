@@ -1,5 +1,6 @@
-import { render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { GradeConfig, Problem, ProblemType } from '../types';
 import type { TimerConfig } from '../types/timer';
 import { Results } from './Results';
@@ -61,9 +62,77 @@ function renderResults() {
 }
 
 describe('Results', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
   it('shows a help button for each incorrect answer', () => {
     renderResults();
 
     expect(screen.getAllByRole('button', { name: /help me with this one/i })).toHaveLength(1);
+  });
+
+  it('tracks the active tutor row by problem id', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => {
+        return new Response(
+          JSON.stringify({
+            summary: 'Start with the problem you picked.',
+            hint: null,
+            nextQuestion: null,
+            workedExample: null,
+            messages: [{ role: 'assistant', content: 'Start with the problem you picked.' }],
+          }),
+          {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          }
+        );
+      })
+    );
+
+    const duplicateProblem: Problem = {
+      id: 'duplicate-2',
+      display: '9 - 4 =',
+      answer: 5,
+      type: 'subtraction',
+      typeName: 'Subtraction',
+    };
+
+    render(
+      <Results
+        score={0}
+        total={2}
+        problems={[
+          { id: 'duplicate-1', display: '9 - 4 =', answer: 5, type: 'subtraction', typeName: 'Subtraction' },
+          duplicateProblem,
+        ]}
+        answers={[6, 6]}
+        onTryAgain={vi.fn()}
+        onBack={vi.fn()}
+        onPrintWorksheet={vi.fn()}
+        grade={makeGrade()}
+        problemType={makeProblemType()}
+        timerConfig={{
+          mode: 'none',
+          secondsPerProblem: 30,
+          totalMinutes: 5,
+        }}
+        onTimerToggle={vi.fn()}
+        onOpenTimerSettings={vi.fn()}
+        theme={'light' as Theme}
+        onToggleTheme={vi.fn()}
+      />
+    );
+
+    const tutorButtons = screen.getAllByRole('button', { name: /help me with this one/i });
+    const user = userEvent.setup();
+    await user.click(tutorButtons[0]);
+
+    await waitFor(() => {
+      expect(tutorButtons[0]).toHaveAttribute('aria-pressed', 'true');
+      expect(tutorButtons[1]).toHaveAttribute('aria-pressed', 'false');
+    });
   });
 });

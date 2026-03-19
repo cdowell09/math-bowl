@@ -1,6 +1,7 @@
 import { GradeConfig, Problem, ProblemType } from '../types';
 import { TimerConfig, TimedQuizResults } from '../types/timer';
 import { WorksheetModalContext } from '../types/worksheet';
+import { useState } from 'react';
 import { Celebration } from './Celebration';
 import { TimedResults } from './TimedResults';
 import { TimerToggle } from './TimerToggle';
@@ -31,6 +32,7 @@ interface ResultsProps {
 
 export function Results({ score, total, problems, answers, onTryAgain, onBack, timing, onPrintWorksheet, grade, problemType, timerConfig, onTimerToggle, onOpenTimerSettings, theme, onToggleTheme }: ResultsProps) {
   const tutor = useProblemTutor();
+  const [activeTutorProblemId, setActiveTutorProblemId] = useState<string | null>(null);
   const percentage = Math.round((score / total) * 100);
 
   const getMessage = () => {
@@ -73,10 +75,7 @@ export function Results({ score, total, problems, answers, onTryAgain, onBack, t
             {problems.map((problem, index) => {
               const userAnswer = answers[index];
               const isCorrect = userAnswer !== null && Math.abs(userAnswer - problem.answer) < 0.001;
-              const isActiveProblem =
-                tutor.activeProblem?.problemDisplay === problem.display &&
-                tutor.activeProblem?.correctAnswer === problem.answer &&
-                tutor.activeProblem?.studentAnswer === (userAnswer ?? null);
+              const isActiveProblem = activeTutorProblemId === problem.id;
 
               return (
                 <div key={problem.id} className={`result-row ${isCorrect ? 'correct' : 'incorrect'}`}>
@@ -97,15 +96,16 @@ export function Results({ score, total, problems, answers, onTryAgain, onBack, t
                   </div>
                   {!isCorrect && (
                     <ProblemTutorButton
-                      onClick={() =>
+                      onClick={() => {
+                        setActiveTutorProblemId(problem.id);
                         void tutor.openTutor({
                           grade: grade.grade,
                           problemType: problem.typeName || problemType.name,
                           problemDisplay: problem.display,
                           correctAnswer: problem.answer,
                           studentAnswer: userAnswer,
-                        })
-                      }
+                        });
+                      }}
                       isActive={isActiveProblem}
                     />
                   )}
@@ -141,8 +141,19 @@ export function Results({ score, total, problems, answers, onTryAgain, onBack, t
           isLoading={tutor.isLoading}
           error={tutor.error}
           onSendMessage={tutor.sendMessage}
-          onClose={tutor.closeTutor}
-          onReset={tutor.resetTutor}
+          onClose={() => {
+            setActiveTutorProblemId(null);
+            tutor.closeTutor();
+          }}
+          onReset={() => {
+            if (!tutor.activeProblem) {
+              setActiveTutorProblemId(null);
+              tutor.closeTutor();
+              return;
+            }
+
+            void tutor.resetTutor();
+          }}
         />
       </div>
     </div>
