@@ -28,6 +28,8 @@ function buildPatternFallback(request: TutorRequest): TutorResponse | null {
     hint,
     nextQuestion,
     workedExample: null,
+    mode: 'fallback',
+    fallbackReason: null,
     messages: [
       {
         role: 'assistant',
@@ -53,6 +55,8 @@ function buildSolvingForXFallback(request: TutorRequest): TutorResponse | null {
       hint: `If you subtract ${b} from ${c}, what do you get?`,
       nextQuestion: `After you get ${a}x = ${afterSubtract}, what is ${afterSubtract} divided by ${a}?`,
       workedExample: null,
+      mode: 'fallback',
+      fallbackReason: null,
       messages: [
         {
           role: 'assistant',
@@ -75,6 +79,8 @@ function buildSolvingForXFallback(request: TutorRequest): TutorResponse | null {
       hint: `If you add ${b} to ${c}, what do you get?`,
       nextQuestion: `After you get ${a}x = ${afterAdd}, what is ${afterAdd} divided by ${a}?`,
       workedExample: null,
+      mode: 'fallback',
+      fallbackReason: null,
       messages: [
         {
           role: 'assistant',
@@ -97,6 +103,8 @@ function buildSolvingForXFallback(request: TutorRequest): TutorResponse | null {
       hint: `What is ${c} - ${b}?`,
       nextQuestion: `After that, what is ${afterSubtract} divided by ${a}?`,
       workedExample: null,
+      mode: 'fallback',
+      fallbackReason: null,
       messages: [
         {
           role: 'assistant',
@@ -119,6 +127,8 @@ function buildSolvingForXFallback(request: TutorRequest): TutorResponse | null {
       hint: `What is ${c} - ${b}?`,
       nextQuestion: `After you get ${a}x = ${afterSubtract}, what is ${afterSubtract} divided by ${a}?`,
       workedExample: null,
+      mode: 'fallback',
+      fallbackReason: null,
       messages: [
         {
           role: 'assistant',
@@ -149,6 +159,8 @@ export function buildTutorFallback(request: TutorRequest): TutorResponse {
     hint: 'Try comparing your answer to the correct answer one small step at a time.',
     nextQuestion: `What part of ${request.problemDisplay} feels the trickiest?`,
     workedExample: null,
+    mode: 'fallback',
+    fallbackReason: null,
     messages: [
       {
         role: 'assistant',

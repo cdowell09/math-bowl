@@ -668,6 +668,7 @@ p {
 .result-row {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 12px;
   padding: 12px 16px;
   border-radius: var(--radius-md);
@@ -677,7 +678,11 @@ p {
 }
 
 .result-main {
-  display: contents;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1 1 260px;
+  min-width: 0;
 }
 
 .result-row.correct {
@@ -707,6 +712,11 @@ p {
   flex: 1;
 }
 
+.result-answer {
+  flex: 0 1 auto;
+  min-width: fit-content;
+}
+
 .wrong-answer {
   text-decoration: line-through;
   color: var(--color-danger);
@@ -721,6 +731,7 @@ p {
 
 .problem-tutor-button {
   align-self: center;
+  flex-shrink: 0;
   background: var(--color-primary-soft);
   border: 1px solid var(--color-primary-soft-border);
   border-radius: 999px;
@@ -832,6 +843,17 @@ p {
 
 .tutor-context-pill--problem {
   color: var(--color-text);
+}
+
+.tutor-status-banner {
+  border: 1px solid var(--color-accent-soft-border);
+  border-radius: var(--radius-md);
+  background: var(--color-accent-soft);
+  color: var(--color-text);
+  font-size: 0.92rem;
+  line-height: 1.45;
+  padding: 10px 12px;
+  text-align: left;
 }
 
 .tutor-message-list {
@@ -1131,6 +1153,30 @@ p {
   }
 }
 
+@media (min-width: 769px) and (max-width: 1023px) {
+  .results-shell {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .tutor-panel {
+    position: static;
+    top: auto;
+    flex-basis: auto;
+    width: 100%;
+    max-height: min(68vh, 620px);
+  }
+
+  .result-row {
+    align-items: flex-start;
+  }
+
+  .result-answer,
+  .problem-tutor-button {
+    margin-left: 42px;
+  }
+}
+
 /* Responsive - Large Desktop (1024px+) */
 @media (min-width: 1024px) {
   .app {
@@ -1172,16 +1218,26 @@ p {
   }
 
   .results-shell {
+    flex-direction: column;
     gap: 18px;
   }
 
-  .results-shell--with-tutor {
-    padding-bottom: clamp(360px, 72vh, 620px);
+  .tutor-panel {
+    position: static;
+    top: auto;
+    flex-basis: auto;
+    width: 100%;
+    max-height: min(68vh, 620px);
+    padding: 16px;
   }
 
-  .tutor-panel {
-    flex-basis: 360px;
-    padding: 16px;
+  .result-row {
+    align-items: flex-start;
+  }
+
+  .result-answer,
+  .problem-tutor-button {
+    margin-left: 42px;
   }
 }
 

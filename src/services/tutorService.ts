@@ -40,6 +40,8 @@ function normalizeTutorResponse(data: unknown): TutorResponse {
     hint: typeof record.hint === 'string' ? record.hint : null,
     nextQuestion: typeof record.nextQuestion === 'string' ? record.nextQuestion : null,
     workedExample: typeof record.workedExample === 'string' ? record.workedExample : null,
+    mode: record.mode === 'fallback' ? 'fallback' : 'live',
+    fallbackReason: typeof record.fallbackReason === 'string' ? record.fallbackReason : null,
     messages: normalizeMessages(record.messages),
   };
 }

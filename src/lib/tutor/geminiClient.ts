@@ -111,6 +111,8 @@ function normalizeTutorResponse(content: string): TutorResponse {
     hint: null,
     nextQuestion: null,
     workedExample: null,
+    mode: 'live',
+    fallbackReason: null,
     messages: [
       {
         role: 'assistant',

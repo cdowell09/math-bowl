@@ -191,6 +191,8 @@ export function TutorPanel({
     return null;
   }
 
+  const isFallbackMode = response?.mode === 'fallback';
+
   return (
     <aside className="tutor-panel" aria-label="Math tutor panel">
       <div className="tutor-panel-header">
@@ -208,6 +210,12 @@ export function TutorPanel({
         <span className="tutor-context-pill">You said {formatAnswer(activeProblem.studentAnswer)}</span>
         <span className="tutor-context-pill">Correct answer {activeProblem.correctAnswer}</span>
       </div>
+
+      {isFallbackMode && (
+        <div className="tutor-status-banner" role="status">
+          <strong>Torch is using fallback help right now.</strong> Live AI help is temporarily unavailable, so this reply may be more limited.
+        </div>
+      )}
 
       <div
         ref={messageListRef}

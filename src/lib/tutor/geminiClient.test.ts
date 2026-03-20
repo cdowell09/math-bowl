@@ -85,6 +85,8 @@ describe('requestGeminiTutor', () => {
       hint: null,
       nextQuestion: null,
       workedExample: null,
+      mode: 'live',
+      fallbackReason: null,
       messages: [{ role: 'assistant', content: 'First sentence. Second sentence.' }],
     });
   });

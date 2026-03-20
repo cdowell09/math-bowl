@@ -15,6 +15,7 @@ describe('buildTutorFallback', () => {
     expect(response.summary).toContain('down by 5');
     expect(response.summary).toContain('58');
     expect(response.nextQuestion).toContain('63');
+    expect(response.mode).toBe('fallback');
   });
 
   it('does not treat other comma-separated problems as patterns', () => {

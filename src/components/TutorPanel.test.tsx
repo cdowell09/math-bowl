@@ -266,4 +266,25 @@ describe('TutorPanel', () => {
       HTMLElement.prototype.scrollTo = originalScrollTo;
     }
   });
+
+  it('shows a fallback-mode notice when the tutor is using offline help', () => {
+    render(
+      <TutorPanel
+        {...makeProps({
+          response: {
+            ...makeResponse(),
+            mode: 'fallback',
+            fallbackReason: 'Gemini request failed with 429',
+          },
+        })}
+      />
+    );
+
+    expect(
+      screen.getByText(/torch is using fallback help right now/i)
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/live ai help is temporarily unavailable/i)
+    ).toBeInTheDocument();
+  });
 });

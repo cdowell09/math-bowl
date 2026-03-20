@@ -15,6 +15,8 @@ describe('requestTutor', () => {
           hint: 'Count on from the larger number.',
           nextQuestion: 'What is 9 plus 4?',
           workedExample: '9 + 4 = 13',
+          mode: 'fallback',
+          fallbackReason: 'Gemini request failed with 429',
           messages: [{ role: 'assistant', content: 'Let us try the first step.' }],
         }),
         {
@@ -51,6 +53,8 @@ describe('requestTutor', () => {
       hint: 'Count on from the larger number.',
       nextQuestion: 'What is 9 plus 4?',
       workedExample: '9 + 4 = 13',
+      mode: 'fallback',
+      fallbackReason: 'Gemini request failed with 429',
       messages: [{ role: 'assistant', content: 'Let us try the first step.' }],
     });
   });

@@ -27,5 +27,7 @@ export interface TutorResponse {
   hint?: string | null;
   nextQuestion?: string | null;
   workedExample?: string | null;
+  mode?: 'live' | 'fallback';
+  fallbackReason?: string | null;
   messages: TutorMessage[];
 }

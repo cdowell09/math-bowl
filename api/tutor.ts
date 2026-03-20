@@ -36,17 +36,26 @@ export default async function handler(req: TutorApiRequest, res: TutorApiRespons
 
     try {
       const request = validateTutorRequest(req.body);
-      res.status(200).json(buildTutorFallback(request));
+      const fallback = buildTutorFallback(request);
+      res.status(200).json({
+        ...fallback,
+        mode: 'fallback',
+        fallbackReason: message,
+      });
     } catch {
       res.status(200).json(
-        buildTutorFallback({
+        {
+          ...buildTutorFallback({
           grade: 1,
           problemType: 'Unknown',
           problemDisplay: 'Unknown problem',
           correctAnswer: 0,
           studentAnswer: null,
           messages: [],
-        })
+          }),
+          mode: 'fallback',
+          fallbackReason: message,
+        }
       );
     }
   }
