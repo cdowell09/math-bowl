@@ -74,7 +74,7 @@ describe('Results', () => {
   it('shows a help button for each incorrect answer', () => {
     renderResults();
 
-    expect(screen.getAllByRole('button', { name: /help me with this one/i })).toHaveLength(1);
+    expect(screen.getAllByRole('button', { name: /get help from torch/i })).toHaveLength(1);
   });
 
   it('tracks the active tutor row by problem id', async () => {
@@ -131,7 +131,7 @@ describe('Results', () => {
       />
     );
 
-    const tutorButtons = screen.getAllByRole('button', { name: /help me with this one/i });
+    const tutorButtons = screen.getAllByRole('button', { name: /get help from torch/i });
     const user = userEvent.setup();
     await user.click(tutorButtons[0]);
 
@@ -139,5 +139,73 @@ describe('Results', () => {
       expect(tutorButtons[0]).toHaveAttribute('aria-pressed', 'true');
       expect(tutorButtons[1]).toHaveAttribute('aria-pressed', 'false');
     });
+  });
+
+  it('renders tutor markdown as formatted content in the chat stream', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => {
+        return new Response(
+          JSON.stringify({
+            summary: 'Try **subtracting 4** first.\n\n- Start with 9\n- Then subtract 4',
+            hint: 'What is `9 - 4`?',
+            nextQuestion: null,
+            workedExample: null,
+            messages: [
+              {
+                role: 'assistant',
+                content: 'Try **subtracting 4** first.\n\n- Start with 9\n- Then subtract 4',
+              },
+            ],
+          }),
+          {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          }
+        );
+      })
+    );
+
+    renderResults();
+
+    const user = userEvent.setup();
+    await user.click(screen.getAllByRole('button', { name: /get help from torch/i })[0]);
+
+    expect(await screen.findByText('Torch')).toBeInTheDocument();
+    const emphasizedText = await screen.findAllByText('subtracting 4');
+    expect(emphasizedText[0].tagName).toBe('STRONG');
+    expect(screen.getAllByRole('list')).toHaveLength(1);
+    expect(screen.getByText('What is ', { exact: false }).querySelector('code')?.textContent).toBe('9 - 4');
+    expect(screen.queryByText('**subtracting 4**')).not.toBeInTheDocument();
+  });
+
+  it('shows the opening tutor reply in the chat history', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => {
+        return new Response(
+          JSON.stringify({
+            summary: 'Break 52 + 26 into tens and ones.',
+            hint: null,
+            nextQuestion: null,
+            workedExample: null,
+            messages: [{ role: 'assistant', content: 'Break 52 + 26 into tens and ones.' }],
+          }),
+          {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          }
+        );
+      })
+    );
+
+    renderResults();
+
+    const user = userEvent.setup();
+    await user.click(screen.getAllByRole('button', { name: /get help from torch/i })[0]);
+
+    const openingReplies = await screen.findAllByText('Break 52 + 26 into tens and ones.');
+    expect(openingReplies).toHaveLength(1);
+    expect(screen.getByText('Torch')).toBeInTheDocument();
   });
 });

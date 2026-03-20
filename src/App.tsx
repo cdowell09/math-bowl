@@ -163,7 +163,7 @@ function App() {
 
   return (
   <>
-    <div className="app">
+    <div className={`app${screen === 'results' ? ' app--results' : ''}`}>
       {screen === 'grades' && (
         <GradeSelector
           grades={grades}

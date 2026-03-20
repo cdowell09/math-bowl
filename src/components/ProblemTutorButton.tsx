@@ -11,7 +11,7 @@ export function ProblemTutorButton({ onClick, isActive = false }: ProblemTutorBu
       onClick={onClick}
       aria-pressed={isActive}
     >
-      Help me with this one
+      Get help from Torch
     </button>
   );
 }

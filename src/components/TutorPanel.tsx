@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import type { TutorMessage, TutorProblemContext, TutorResponse } from '../types/tutor';
+import { TutorMarkdown } from './TutorMarkdown';
 
 interface TutorPanelProps {
   isOpen: boolean;
@@ -18,6 +19,43 @@ function formatAnswer(answer: number | null) {
   return answer === null ? '—' : answer.toString();
 }
 
+function composeResponseContent(response: TutorResponse | null): string {
+  if (!response) {
+    return '';
+  }
+
+  const content = [response.summary, response.hint ? `Hint: ${response.hint}` : null, response.nextQuestion, response.workedExample]
+    .filter((value): value is string => Boolean(value && value.trim() !== ''))
+    .join('\n\n')
+    .trim();
+
+  return content;
+}
+
+function buildFallbackMessage(response: TutorResponse | null): TutorMessage[] {
+  const content = composeResponseContent(response);
+  return content ? [{ role: 'assistant', content }] : [];
+}
+
+function getVisibleMessages(messages: TutorMessage[], response: TutorResponse | null): TutorMessage[] {
+  const composedResponse = composeResponseContent(response);
+
+  if (messages.length > 0) {
+    if (
+      composedResponse &&
+      messages[0]?.role === 'assistant' &&
+      response?.summary?.trim() &&
+      messages[0].content.trim() === response.summary.trim()
+    ) {
+      return [{ ...messages[0], content: composedResponse }, ...messages.slice(1)];
+    }
+
+    return messages;
+  }
+
+  return buildFallbackMessage(response);
+}
+
 export function TutorPanel({
   isOpen,
   activeProblem,
@@ -30,6 +68,7 @@ export function TutorPanel({
   onReset,
 }: TutorPanelProps) {
   const [draft, setDraft] = useState('');
+  const visibleMessages = getVisibleMessages(messages, response);
 
   if (!isOpen || !activeProblem) {
     return null;
@@ -49,7 +88,7 @@ export function TutorPanel({
       <div className="tutor-panel-header">
         <div>
           <p className="tutor-panel-eyebrow">Math help</p>
-          <h3>Let&apos;s work through this one</h3>
+          <h3>Torch the Tutor</h3>
         </div>
         <button type="button" className="tutor-panel-close" onClick={onClose}>
           Close
@@ -71,23 +110,16 @@ export function TutorPanel({
         </div>
       </div>
 
-      <div className="tutor-response-stack">
-        {response?.summary && <p className="tutor-response-copy">{response.summary}</p>}
-        {response?.hint && <p className="tutor-response-copy tutor-response-copy--hint">Hint: {response.hint}</p>}
-        {response?.nextQuestion && <p className="tutor-response-copy tutor-response-copy--question">{response.nextQuestion}</p>}
-        {response?.workedExample && <p className="tutor-response-copy tutor-response-copy--example">{response.workedExample}</p>}
-      </div>
-
       <div className="tutor-message-list" role="log" aria-live="polite">
-        {messages.length === 0 ? (
+        {visibleMessages.length === 0 ? (
           <p className="tutor-empty-state">
             Ask what part feels tricky and we&apos;ll work through it step by step.
           </p>
         ) : (
-          messages.map((message, index) => (
+          visibleMessages.map((message, index) => (
             <div key={`${message.role}-${index}-${message.content}`} className={`tutor-message tutor-message--${message.role}`}>
-              <span className="tutor-message-role">{message.role === 'user' ? 'You' : 'Tutor'}</span>
-              <span className="tutor-message-text">{message.content}</span>
+              <span className="tutor-message-role">{message.role === 'user' ? 'You' : 'Torch'}</span>
+              <TutorMarkdown content={message.content} className="tutor-message-text" />
             </div>
           ))
         )}
@@ -96,26 +128,28 @@ export function TutorPanel({
 
       {error && <div className="tutor-error">{error}</div>}
 
-      <form className="tutor-composer" onSubmit={handleSubmit}>
-        <label className="sr-only" htmlFor="tutor-composer-input">
-          Ask for help
-        </label>
-        <input
-          id="tutor-composer-input"
-          type="text"
-          value={draft}
-          onChange={(event) => setDraft(event.target.value)}
-          placeholder="Tell me what part was confusing"
-          className="tutor-composer-input"
-        />
-        <button type="submit" className="tutor-composer-button" disabled={!draft.trim() || isLoading}>
-          Send
-        </button>
-      </form>
+      <div className="tutor-panel-footer">
+        <form className="tutor-composer" onSubmit={handleSubmit}>
+          <label className="sr-only" htmlFor="tutor-composer-input">
+            Ask for help
+          </label>
+          <input
+            id="tutor-composer-input"
+            type="text"
+            value={draft}
+            onChange={(event) => setDraft(event.target.value)}
+            placeholder="Tell me what part was confusing"
+            className="tutor-composer-input"
+          />
+          <button type="submit" className="tutor-composer-button" disabled={!draft.trim() || isLoading}>
+            Send
+          </button>
+        </form>
 
-      <button type="button" className="tutor-reset-button" onClick={onReset}>
-        Start over
-      </button>
+        <button type="button" className="tutor-reset-button" onClick={onReset}>
+          Start over
+        </button>
+      </div>
     </aside>
   );
 }

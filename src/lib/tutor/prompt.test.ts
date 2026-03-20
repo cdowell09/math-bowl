@@ -16,6 +16,21 @@ describe('buildTutorPrompt', () => {
     expect(prompt.user).toContain('Correct answer: 35');
   });
 
+  it('encourages short, step-by-step tutoring for kids', () => {
+    const prompt = buildTutorPrompt({
+      grade: 4,
+      problemType: 'Addition',
+      problemDisplay: '52 + 26 =',
+      correctAnswer: 78,
+      studentAnswer: 2,
+      messages: [],
+    });
+
+    expect(prompt.system).toContain('Break the explanation into tiny steps');
+    expect(prompt.system).toContain('Use short sentences or short bullet points');
+    expect(prompt.system).toContain('Let the student do the next small step');
+  });
+
   it('includes the active conversation history in the prompt', () => {
     const prompt = buildTutorPrompt({
       grade: 3,
