@@ -95,19 +95,10 @@ export function TutorPanel({
         </button>
       </div>
 
-      <div className="tutor-context-grid">
-        <div className="tutor-context-card">
-          <span>Problem</span>
-          <strong>{activeProblem.problemDisplay}</strong>
-        </div>
-        <div className="tutor-context-card">
-          <span>Your answer</span>
-          <strong>{formatAnswer(activeProblem.studentAnswer)}</strong>
-        </div>
-        <div className="tutor-context-card">
-          <span>Correct answer</span>
-          <strong>{activeProblem.correctAnswer}</strong>
-        </div>
+      <div className="tutor-context-summary" aria-label="Problem summary">
+        <span className="tutor-context-pill tutor-context-pill--problem">{activeProblem.problemDisplay}</span>
+        <span className="tutor-context-pill">You said {formatAnswer(activeProblem.studentAnswer)}</span>
+        <span className="tutor-context-pill">Correct answer {activeProblem.correctAnswer}</span>
       </div>
 
       <div className="tutor-message-list" role="log" aria-live="polite">

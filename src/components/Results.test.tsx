@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { GradeConfig, Problem, ProblemType } from '../types';
@@ -207,5 +207,41 @@ describe('Results', () => {
     const openingReplies = await screen.findAllByText('Break 52 + 26 into tens and ones.');
     expect(openingReplies).toHaveLength(1);
     expect(screen.getByText('Torch')).toBeInTheDocument();
+  });
+
+  it('shows tutor context as a compact summary instead of stacked cards', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => {
+        return new Response(
+          JSON.stringify({
+            summary: 'Let us compare your answer to the pattern.',
+            hint: null,
+            nextQuestion: null,
+            workedExample: null,
+            messages: [{ role: 'assistant', content: 'Let us compare your answer to the pattern.' }],
+          }),
+          {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          }
+        );
+      })
+    );
+
+    renderResults();
+
+    const user = userEvent.setup();
+    await user.click(screen.getAllByRole('button', { name: /get help from torch/i })[0]);
+
+    const tutorPanel = await screen.findByLabelText(/math tutor panel/i);
+    const tutor = within(tutorPanel);
+
+    expect(tutor.getByText('9 - 4 =')).toBeInTheDocument();
+    expect(tutor.getByText('You said 6')).toBeInTheDocument();
+    expect(tutor.getByText('Correct answer 5')).toBeInTheDocument();
+    expect(tutor.queryByText(/^Problem$/)).not.toBeInTheDocument();
+    expect(tutor.queryByText(/^Your answer$/)).not.toBeInTheDocument();
+    expect(tutor.queryByText(/^Correct answer$/)).not.toBeInTheDocument();
   });
 });
