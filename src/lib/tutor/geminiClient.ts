@@ -3,6 +3,7 @@ import type { TutorResponse } from '../../types/tutor';
 
 const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
 export const DEFAULT_GEMINI_MODEL = 'gemini-3.1-flash-lite-preview';
+const DEFAULT_GEMINI_THINKING_LEVEL = 'low';
 const DEFAULT_TIMEOUT_MS = 12000;
 
 export function createGeminiHeaders(apiKey: string) {
@@ -56,6 +57,9 @@ export async function requestGeminiTutor(
           ],
           generationConfig: {
             temperature: 0.2,
+            thinkingConfig: {
+              thinkingLevel: DEFAULT_GEMINI_THINKING_LEVEL,
+            },
           },
         }),
       }),

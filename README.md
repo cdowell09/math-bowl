@@ -100,6 +100,8 @@ VITE_ENABLE_RESULTS_TUTOR=true
 3. If you only run `npm run dev`, you will still see the frontend, but the tutor panel cannot fetch responses because Vite does not serve the API route.
 4. Finish a quiz and open a missed problem from the `Results` screen to launch the tutor panel.
 
+The tutor backend uses `gemini-3.1-flash-lite-preview` with Gemini thinking set to `low` for faster explanations.
+
 If Gemini times out or returns an invalid response, the backend falls back to a short safe explanation that still includes the correct answer.
 
 For validation, run:

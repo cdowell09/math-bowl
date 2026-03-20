@@ -56,9 +56,12 @@ describe('requestGeminiTutor', () => {
 
   it('normalizes a Gemini text response into tutor shape', async () => {
     vi.stubEnv('GEMINI_API_KEY', 'test-key');
+    let requestBody: Record<string, unknown> | null = null;
 
-    const fetchImpl = vi.fn(async () =>
-      new Response(
+    const fetchImpl = vi.fn(async (_input: RequestInfo | URL, init?: RequestInit) => {
+      requestBody = JSON.parse(String(init?.body ?? '{}')) as Record<string, unknown>;
+
+      return new Response(
         JSON.stringify({
           candidates: [
             {
@@ -72,8 +75,8 @@ describe('requestGeminiTutor', () => {
           ],
         }),
         { status: 200, headers: { 'Content-Type': 'application/json' } }
-      )
-    );
+      );
+    });
 
     await expect(
       requestGeminiTutor(
@@ -88,6 +91,15 @@ describe('requestGeminiTutor', () => {
       mode: 'live',
       fallbackReason: null,
       messages: [{ role: 'assistant', content: 'First sentence. Second sentence.' }],
+    });
+
+    expect(requestBody).toMatchObject({
+      generationConfig: {
+        temperature: 0.2,
+        thinkingConfig: {
+          thinkingLevel: 'low',
+        },
+      },
     });
   });
 
