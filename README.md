@@ -90,8 +90,9 @@ The results tutor is gated by an environment flag so rollout can stay controlled
 1. Add these values to your local `.env` file:
 
 ```bash
-OPENROUTER_API_KEY=your_openrouter_api_key
-OPENROUTER_MODEL=stepfun/step-3.5-flash:free
+GEMINI_API_KEY=your_gemini_api_key
+GEMINI_MODEL=gemini-3.1-flash-lite-preview
+GEMINI_TIMEOUT_MS=12000
 VITE_ENABLE_RESULTS_TUTOR=true
 ```
 
@@ -99,7 +100,7 @@ VITE_ENABLE_RESULTS_TUTOR=true
 3. If you only run `npm run dev`, you will still see the frontend, but the tutor panel cannot fetch responses because Vite does not serve the API route.
 4. Finish a quiz and open a missed problem from the `Results` screen to launch the tutor panel.
 
-If the provider times out or returns an invalid response, the backend falls back to a short safe explanation that still includes the correct answer.
+If Gemini times out or returns an invalid response, the backend falls back to a short safe explanation that still includes the correct answer.
 
 For validation, run:
 

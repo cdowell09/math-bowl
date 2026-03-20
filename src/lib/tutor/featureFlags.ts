@@ -11,7 +11,7 @@ function parseBooleanFlag(value: string | undefined): boolean {
 }
 
 export function isResultsTutorEnabled(env?: TutorFeatureEnv): boolean {
-  if (env?.VITE_ENABLE_RESULTS_TUTOR !== undefined) {
+  if (env !== undefined) {
     return parseBooleanFlag(env.VITE_ENABLE_RESULTS_TUTOR);
   }
 

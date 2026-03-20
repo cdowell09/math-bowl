@@ -1,6 +1,6 @@
 import { buildTutorFallback } from '../src/lib/tutor/fallback.js';
+import { requestGeminiTutor } from '../src/lib/tutor/geminiClient.js';
 import { buildTutorPrompt } from '../src/lib/tutor/prompt.js';
-import { requestOpenRouterTutor } from '../src/lib/tutor/openRouterClient.js';
 import { validateTutorRequest } from '../src/lib/tutor/validation.js';
 
 interface TutorApiRequest {
@@ -24,7 +24,7 @@ export default async function handler(req: TutorApiRequest, res: TutorApiRespons
   try {
     const request = validateTutorRequest(req.body);
     const prompt = buildTutorPrompt(request);
-    const response = await requestOpenRouterTutor(prompt);
+    const response = await requestGeminiTutor(prompt);
     res.status(200).json(response);
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Tutor request failed';
