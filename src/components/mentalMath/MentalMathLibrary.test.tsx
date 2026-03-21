@@ -65,4 +65,26 @@ describe('MentalMathLibrary', () => {
     expect(moveDetails).toHaveAttribute('open');
     expect(within(moveDetails as HTMLElement).getByText(/When to use it:/i)).toBeVisible();
   });
+
+  it('separates the start practice action label from the topic name', () => {
+    render(
+      <MentalMathLibrary
+        grade={grade4}
+        activeProblemType={grade4.problemTypes[0]}
+        onBack={vi.fn()}
+        onSelectProblemType={vi.fn()}
+        onStartPractice={vi.fn()}
+      />
+    );
+
+    const topicPattern = grade4.problemTypes[0].name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const button = screen.getByRole('button', {
+      name: new RegExp(`^start practicing ${topicPattern}$`, 'i'),
+    });
+
+    expect(within(button).getByText(/^Start Practicing$/i)).toBeInTheDocument();
+    expect(
+      within(button).getByText((content) => content.trim() === grade4.problemTypes[0].name)
+    ).toBeInTheDocument();
+  });
 });

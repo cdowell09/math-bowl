@@ -55,4 +55,27 @@ describe('App mental math routes', () => {
 
     expect(screen.getByRole('heading', { name: /grade 1 subtraction/i })).toBeInTheDocument();
   });
+
+  it('scrolls back to the top when a quiz transitions to results', async () => {
+    const scrollTo = vi.fn();
+    vi.stubGlobal('scrollTo', scrollTo);
+
+    render(<App />);
+
+    const user = userEvent.setup();
+    await user.click(await screen.findByRole('button', { name: /grade 1/i }));
+    await user.click((await screen.findAllByRole('button', { name: /^patterns/i }))[0]);
+
+    const answerInputs = await screen.findAllByRole('textbox');
+    scrollTo.mockClear();
+
+    for (const input of answerInputs) {
+      await user.type(input, '1');
+    }
+
+    await user.click(screen.getByRole('button', { name: /check my answers/i }));
+
+    expect(await screen.findByText(/nice try! practice makes perfect!/i)).toBeInTheDocument();
+    expect(scrollTo).toHaveBeenCalledWith(0, 0);
+  });
 });

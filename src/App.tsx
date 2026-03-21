@@ -206,6 +206,10 @@ function App() {
     return () => window.removeEventListener('popstate', onPopState);
   }, []);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [screen]);
+
   const handleOpenWorksheetModal = (context: WorksheetModalContext) => {
     openWorksheetModal(context);
   };

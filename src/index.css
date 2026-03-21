@@ -249,7 +249,7 @@ p {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding-right: 48px;
+  padding-right: 64px;
   text-align: left;
   position: relative;
   z-index: 1;
@@ -275,7 +275,7 @@ p {
   border: none;
   border-radius: var(--radius-lg);
   padding: 18px 22px;
-  padding-right: 56px;
+  padding-right: 68px;
   font-size: 1.35rem;
   font-weight: 800;
   color: white;
@@ -626,7 +626,7 @@ p {
 .results-shell {
   display: flex;
   align-items: flex-start;
-  gap: 24px;
+  gap: clamp(20px, 3vw, 32px);
 }
 
 .results-shell--with-tutor {
@@ -729,6 +729,7 @@ p {
 .result-followup {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 10px;
   width: 100%;
   padding-top: 10px;
@@ -740,6 +741,7 @@ p {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .result-followup-prompt {
@@ -771,7 +773,8 @@ p {
   font-family: inherit;
   font-size: 0.95rem;
   font-weight: 700;
-  padding: 8px 12px;
+  min-height: 44px;
+  padding: 10px 14px;
   transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
   white-space: nowrap;
 }
@@ -789,7 +792,7 @@ p {
 }
 
 .tutor-panel {
-  flex: 0 0 400px;
+  flex: 0 0 clamp(360px, 30vw, 460px);
   position: sticky;
   top: 88px;
   display: flex;
@@ -803,6 +806,7 @@ p {
   border-radius: var(--radius-xl);
   padding: 18px;
   box-shadow: var(--shadow-lg);
+  width: min(100%, clamp(360px, 30vw, 460px));
 }
 
 .tutor-panel-header {
@@ -1236,7 +1240,7 @@ p {
   }
 }
 
-@media (min-width: 769px) and (max-width: 1023px) {
+@media (min-width: 769px) and (max-width: 1180px) {
   .results-shell {
     flex-direction: column;
     gap: 20px;
@@ -1247,7 +1251,7 @@ p {
     top: auto;
     flex-basis: auto;
     width: 100%;
-    max-height: min(68vh, 620px);
+    max-height: min(70vh, 720px);
   }
 
   .result-row {
@@ -1271,7 +1275,19 @@ p {
   }
 
   .grade-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .grade-grid > .grade-card {
+    grid-column: span 2;
+  }
+
+  .grade-grid > .grade-card:nth-last-child(2):nth-child(4) {
+    grid-column: 2 / span 2;
+  }
+
+  .grade-grid > .grade-card:last-child:nth-child(5) {
+    grid-column: 4 / span 2;
   }
 
   .problem-type-grid {
@@ -1350,25 +1366,31 @@ p {
 
   /* Timer Toggle on mobile */
   .timer-toggle {
-    flex-direction: column;
-    align-items: stretch;
+    align-items: center;
     gap: 12px;
-    padding: 14px;
+    padding: 12px 14px;
   }
 
   .timer-toggle-info {
-    justify-content: center;
+    justify-content: flex-start;
+    min-width: 0;
   }
 
   .timer-toggle-switch {
-    justify-content: center;
-    padding: 8px 0;
+    flex-shrink: 0;
+    justify-content: flex-end;
   }
 
   /* Use 2 columns for grades on mobile - they're small buttons */
   .grade-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
+  }
+
+  .grade-grid > .grade-card:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: min(100%, 220px);
   }
 
   .problem-type-grid {
@@ -1499,6 +1521,13 @@ p {
 
   .result-followup-actions {
     width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .result-followup-prompt {
+    font-size: 0.9rem;
   }
 
   .results-buttons {
@@ -1511,17 +1540,22 @@ p {
   }
 
   .results-shell--with-tutor {
-    padding-bottom: clamp(360px, 72vh, 620px);
+    padding-bottom: clamp(430px, 78svh, 700px);
   }
 
   .tutor-panel {
     position: fixed;
-    left: 12px;
-    right: 12px;
+    left: 50%;
+    right: auto;
     bottom: 12px;
     top: auto;
+    transform: translateX(-50%);
     z-index: 30;
-    max-height: min(72vh, 620px);
+    width: min(calc(100svw - 24px), 34rem);
+    max-width: min(calc(100svw - 24px), 34rem);
+    max-height: min(78svh, 700px);
+    padding: 16px;
+    gap: 12px;
   }
 
   .try-again-button {
@@ -1610,6 +1644,20 @@ p {
   .surprise-me-button {
     padding: 14px 20px;
     font-size: 1.1rem;
+  }
+
+  .timer-toggle {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .timer-toggle-info {
+    justify-content: center;
+  }
+
+  .timer-toggle-switch {
+    justify-content: center;
   }
 
   .problem-display {
@@ -1880,15 +1928,17 @@ p {
   .header-bar {
     flex-wrap: wrap;
     gap: 8px;
+    align-items: flex-start;
   }
 
   .header-bar-left {
     order: 1;
-    flex: 1 1 auto;
+    flex: 0 1 auto;
   }
 
   .header-bar-right {
     order: 2;
+    flex: 0 0 auto;
     margin-left: auto;
   }
 
@@ -1900,6 +1950,46 @@ p {
   .theme-toggle {
     width: 40px;
     height: 40px;
+  }
+
+  .header-bar .back-button {
+    width: auto;
+    min-width: 96px;
+    padding-inline: 14px;
+  }
+
+  .results .header-bar {
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+
+  .results .header-bar-center {
+    order: 2;
+    flex: 0 1 auto;
+  }
+
+  .results .header-bar-right {
+    order: 3;
+  }
+
+  .results .header-bar .timer-toggle {
+    width: auto;
+    min-width: 0;
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  .results .header-bar .timer-toggle-info {
+    gap: 6px;
+  }
+
+  .results .header-bar .timer-toggle-label {
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+
+  .results .header-bar .timer-toggle-edit {
+    display: none;
   }
 
   .timer-display {
@@ -1946,7 +2036,9 @@ p {
   background: rgba(255, 255, 255, 0.18);
   border: 1px solid rgba(255, 255, 255, 0.35);
   border-radius: 10px;
-  padding: 7px;
+  width: 42px;
+  height: 42px;
+  padding: 0;
   color: white;
   cursor: pointer;
   display: flex;
@@ -2400,9 +2492,10 @@ p {
 
 @media (max-width: 480px) {
   .card-print-button {
-    padding: 6px;
-    top: 8px;
-    right: 8px;
+    top: 6px;
+    right: 6px;
+    width: 44px;
+    height: 44px;
   }
 
   .print-worksheet-button {
@@ -2458,6 +2551,11 @@ p {
   background: linear-gradient(135deg, rgba(245, 158, 11, 0.22) 0%, rgba(37, 99, 235, 0.14) 100%);
 }
 
+.mental-math-library-title,
+.mental-math-library-intro {
+  text-wrap: balance;
+}
+
 .mental-math-library-badge {
   display: inline-flex;
   align-items: center;
@@ -2480,6 +2578,7 @@ p {
 }
 
 .mental-math-topic-tab {
+  flex: 0 0 auto;
   border: 1px solid var(--color-border);
   background: var(--color-surface);
   color: var(--color-text);
@@ -2487,6 +2586,7 @@ p {
   padding: 10px 16px;
   font-size: 0.95rem;
   font-weight: 700;
+  white-space: nowrap;
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease, background 0.15s ease;
 }
@@ -2633,6 +2733,25 @@ p {
   justify-content: center;
 }
 
+.mental-math-library-start-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  line-height: 1.1;
+}
+
+.mental-math-library-start-prefix {
+  font-size: 0.8em;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.mental-math-library-start-topic {
+  max-width: 22ch;
+  text-wrap: balance;
+}
+
 .mental-math-empty-state {
   text-align: center;
   padding: 24px 12px;
@@ -2699,7 +2818,7 @@ p {
   flex-direction: column;
   gap: 4px;
   min-width: 0;
-  width: 100%;
+  width: min(100%, 34rem);
   padding: 12px 14px;
   border-radius: var(--radius-md);
   background: var(--color-surface);
@@ -2754,4 +2873,78 @@ p {
 
 .print-strategy-box li + li {
   margin-top: 6px;
+}
+
+@media (max-width: 480px) {
+  .mental-math-library-title {
+    font-size: clamp(1.6rem, 7vw, 2rem);
+    line-height: 1.08;
+  }
+
+  .mental-math-library-intro {
+    font-size: 0.96rem;
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+
+  .mental-math-topic-tabs {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    margin: 0 -2px 18px;
+    padding: 0 2px 6px;
+    scroll-snap-type: x proximity;
+  }
+
+  .mental-math-topic-tab {
+    scroll-snap-align: start;
+    min-height: 44px;
+    font-size: 0.88rem;
+    padding: 11px 16px;
+  }
+
+  .mental-math-guide-view h2 {
+    font-size: 1.35rem;
+    line-height: 1.15;
+  }
+
+  .mental-math-guide-view p {
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .mental-math-section {
+    padding: 14px;
+  }
+
+  .mental-math-section h3 {
+    font-size: 1.05rem;
+  }
+
+  .mental-math-list,
+  .mental-math-move-rule,
+  .mental-math-move-content p,
+  .mental-math-steps,
+  .mental-math-tip-row {
+    font-size: 0.92rem;
+  }
+
+  .mental-math-library-actions {
+    margin-top: 16px;
+  }
+
+  .mental-math-library-start-button {
+    width: 100%;
+    max-width: none;
+    gap: 5px;
+  }
+
+  .mental-math-library-start-prefix {
+    font-size: 0.72em;
+  }
+
+  .mental-math-library-start-topic {
+    max-width: 16ch;
+    font-size: 0.96em;
+  }
 }

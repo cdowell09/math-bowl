@@ -45,8 +45,8 @@ export function MentalMathLibrary({
         </div>
       </div>
 
-      <h1>Winning Tricks for {grade.name}</h1>
-      <p>Study the fastest thinking moves for each topic, then jump straight into practice.</p>
+      <h1 className="mental-math-library-title">Winning Tricks for {grade.name}</h1>
+      <p className="mental-math-library-intro">Study the fastest thinking moves for each topic, then jump straight into practice.</p>
 
       <div className="mental-math-topic-tabs" role="tablist" aria-label={`${grade.name} topics`}>
         {grade.problemTypes.map((problemType) => (
@@ -67,8 +67,13 @@ export function MentalMathLibrary({
           <MentalMathGuideView guide={activeGuide} />
           {activeProblemType ? (
             <div className="mental-math-library-actions">
-              <button className="submit-button" onClick={() => onStartPractice(activeProblemType)}>
-                Start Practicing {activeProblemType.name}
+              <button
+                className="submit-button mental-math-library-start-button"
+                onClick={() => onStartPractice(activeProblemType)}
+                aria-label={`Start practicing ${activeProblemType.name}`}
+              >
+                <span className="mental-math-library-start-prefix">Start Practicing</span>
+                <span className="mental-math-library-start-topic">{activeProblemType.name}</span>
               </button>
             </div>
           ) : null}
