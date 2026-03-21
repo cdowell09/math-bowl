@@ -10,6 +10,7 @@ interface ProblemTypeSelectorProps {
   onSelect: (problemType: ProblemType) => void;
   onBack: () => void;
   onPrintWorksheet: (context: WorksheetModalContext) => void;
+  onOpenMentalMathLibrary: () => void;
   timerConfig: TimerConfig;
   onTimerToggle: () => void;
   onOpenTimerSettings: () => void;
@@ -27,7 +28,7 @@ function PrintIcon() {
   );
 }
 
-export function ProblemTypeSelector({ grade, onSelect, onBack, onPrintWorksheet, timerConfig, onTimerToggle, onOpenTimerSettings, theme, onToggleTheme }: ProblemTypeSelectorProps) {
+export function ProblemTypeSelector({ grade, onSelect, onBack, onPrintWorksheet, onOpenMentalMathLibrary, timerConfig, onTimerToggle, onOpenTimerSettings, theme, onToggleTheme }: ProblemTypeSelectorProps) {
   const handleSurpriseMe = () => {
     const surpriseProblemType: ProblemType = {
       id: 'surprise-me',
@@ -88,6 +89,10 @@ export function ProblemTypeSelector({ grade, onSelect, onBack, onPrintWorksheet,
 
       <h2>{grade.name}</h2>
       <p>Choose what to practice:</p>
+
+      <button className="study-guides-button" onClick={() => onOpenMentalMathLibrary()} type="button">
+        Study Winning Tricks
+      </button>
 
       <div className="surprise-me-wrapper">
         <button className="surprise-me-button" onClick={handleSurpriseMe} type="button">

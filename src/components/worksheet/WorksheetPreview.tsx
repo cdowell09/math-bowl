@@ -1,4 +1,5 @@
 import { Worksheet } from '../../types/worksheet';
+import { getMentalMathGuide } from '../../lib/mentalMath/guides';
 
 interface WorksheetPreviewProps {
   worksheet: Worksheet;
@@ -7,6 +8,8 @@ interface WorksheetPreviewProps {
 export function WorksheetPreview({ worksheet }: WorksheetPreviewProps) {
   const previewCount = Math.min(5, worksheet.problems.length);
   const remaining = worksheet.problems.length - previewCount;
+  const guide = getMentalMathGuide(worksheet.grade, worksheet.problemTypeId);
+  const topMove = guide?.coreMoves[0] ?? null;
 
   return (
     <div className="worksheet-preview">
@@ -30,6 +33,12 @@ export function WorksheetPreview({ worksheet }: WorksheetPreviewProps) {
         {worksheet.includeAnswerKey && (
           <div className="preview-answer-key-indicator">
             Answer key will be included
+          </div>
+        )}
+
+        {topMove && (
+          <div className="worksheet-preview-tip">
+            <strong>Fast ways to think:</strong> {topMove.title}
           </div>
         )}
       </div>

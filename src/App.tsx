@@ -13,6 +13,7 @@ import { ProblemTypeSelector } from './components/ProblemTypeSelector';
 import { Quiz } from './components/Quiz';
 import { Results } from './components/Results';
 import { TimerSettingsModal } from './components/TimerSettingsModal';
+import { MentalMathLibrary } from './components/mentalMath';
 import { PrintWorksheetModal, WorksheetPrintView } from './components/worksheet';
 import { useTimerSettings } from './hooks/useTimerSettings';
 import { useWorksheetModal } from './hooks/useWorksheetModal';
@@ -22,7 +23,7 @@ import { useTheme } from './hooks/useTheme';
 // Add more grades here as you implement them
 const grades: GradeConfig[] = [grade1, grade2, grade3, grade4, grade5];
 
-type Screen = 'grades' | 'problemTypes' | 'quiz' | 'results';
+type Screen = 'grades' | 'problemTypes' | 'mentalMathLibrary' | 'quiz' | 'results';
 
 interface QuizResults {
   score: number;
@@ -38,14 +39,67 @@ function getBasePath(): string {
   return baseHref.replace(/\/+$/, '');
 }
 
-function parseGradeFromPath(pathname: string): number | null {
+function normalizeRoutePath(pathname: string): string {
   const base = getBasePath();
   const withoutBase = base && pathname.startsWith(base) ? pathname.slice(base.length) || '/' : pathname;
   const clean = withoutBase.replace(/\/+$/, '');
+  return clean || '/';
+}
+
+function slugifyRouteSegment(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function getMentalMathTopicSlug(problemType: ProblemType): string {
+  return slugifyRouteSegment(problemType.name);
+}
+
+function parseMentalMathPath(pathname: string): { gradeNum: number; topicSlug: string | null } | null {
+  const clean = normalizeRoutePath(pathname);
+  const match = clean.match(/^\/grade-?(\d+)\/tricks(?:\/([^/]+))?$/i);
+  if (!match) return null;
+
+  const gradeNum = parseInt(match[1], 10);
+  if (!Number.isFinite(gradeNum)) return null;
+
+  return {
+    gradeNum,
+    topicSlug: match[2] ? decodeURIComponent(match[2]).toLowerCase() : null,
+  };
+}
+
+function parseGradeFromPath(pathname: string): number | null {
+  const clean = normalizeRoutePath(pathname);
   const match = clean.match(/^\/grade-?(\d+)$/i);
   if (!match) return null;
   const gradeNum = parseInt(match[1], 10);
   return Number.isFinite(gradeNum) ? gradeNum : null;
+}
+
+function findMentalMathProblemType(grade: GradeConfig, topicSlug: string | null): ProblemType | null {
+  if (!topicSlug) {
+    return grade.problemTypes[0] ?? null;
+  }
+
+  return (
+    grade.problemTypes.find(
+      (problemType) =>
+        getMentalMathTopicSlug(problemType) === topicSlug ||
+        slugifyRouteSegment(problemType.id) === topicSlug
+    ) ?? grade.problemTypes[0] ?? null
+  );
+}
+
+function buildMentalMathPath(grade: GradeConfig, problemType: ProblemType | null): string {
+  if (!problemType) {
+    return `/grade${grade.grade}/tricks`;
+  }
+
+  return `/grade${grade.grade}/tricks/${getMentalMathTopicSlug(problemType)}`;
 }
 
 function withBase(path: string): string {
@@ -58,6 +112,7 @@ function App() {
   const [screen, setScreen] = useState<Screen>('grades');
   const [selectedGrade, setSelectedGrade] = useState<GradeConfig | null>(null);
   const [selectedProblemType, setSelectedProblemType] = useState<ProblemType | null>(null);
+  const [selectedMentalMathProblemType, setSelectedMentalMathProblemType] = useState<ProblemType | null>(null);
   const [quizResults, setQuizResults] = useState<QuizResults | null>(null);
   const [showTimerSettings, setShowTimerSettings] = useState(false);
   const { config: timerConfig, updateConfig: updateTimerConfig, toggleTimer } = useTimerSettings();
@@ -83,12 +138,42 @@ function App() {
   }, []);
 
   const applyPathToState = (pathname: string, replaceHistory = false) => {
+    const mentalMathRoute = parseMentalMathPath(pathname);
+    if (mentalMathRoute) {
+      const grade = gradeByNumber.get(mentalMathRoute.gradeNum) ?? null;
+
+      if (!grade) {
+        setSelectedGrade(null);
+        setSelectedProblemType(null);
+        setSelectedMentalMathProblemType(null);
+        setQuizResults(null);
+        setScreen('grades');
+        if (replaceHistory) {
+          window.history.replaceState(null, '', withBase('/'));
+        }
+        return;
+      }
+
+      const problemType = findMentalMathProblemType(grade, mentalMathRoute.topicSlug);
+
+      setSelectedGrade(grade);
+      setSelectedProblemType(null);
+      setSelectedMentalMathProblemType(problemType);
+      setQuizResults(null);
+      setScreen('mentalMathLibrary');
+      if (replaceHistory) {
+        window.history.replaceState(null, '', withBase(buildMentalMathPath(grade, problemType)));
+      }
+      return;
+    }
+
     const gradeNum = parseGradeFromPath(pathname);
     const grade = gradeNum ? gradeByNumber.get(gradeNum) ?? null : null;
 
     if (grade) {
       setSelectedGrade(grade);
       setSelectedProblemType(null);
+      setSelectedMentalMathProblemType(null);
       setQuizResults(null);
       setScreen('problemTypes');
       if (replaceHistory) {
@@ -99,6 +184,7 @@ function App() {
 
     setSelectedGrade(null);
     setSelectedProblemType(null);
+    setSelectedMentalMathProblemType(null);
     setQuizResults(null);
     setScreen('grades');
     if (replaceHistory) {
@@ -127,12 +213,28 @@ function App() {
   const handleGradeSelect = (grade: GradeConfig) => {
     pushPath(`/grade${grade.grade}`);
     setSelectedGrade(grade);
+    setSelectedMentalMathProblemType(null);
     setScreen('problemTypes');
   };
 
   const handleProblemTypeSelect = (problemType: ProblemType) => {
     setSelectedProblemType(problemType);
+    setSelectedMentalMathProblemType(problemType);
     setScreen('quiz');
+  };
+
+  const handleOpenMentalMathLibrary = () => {
+    if (!selectedGrade) return;
+    const problemType = selectedMentalMathProblemType ?? selectedGrade.problemTypes[0] ?? null;
+    pushPath(buildMentalMathPath(selectedGrade, problemType));
+    setSelectedMentalMathProblemType(problemType);
+    setScreen('mentalMathLibrary');
+  };
+
+  const handleMentalMathProblemTypeSelect = (problemType: ProblemType) => {
+    if (!selectedGrade) return;
+    pushPath(buildMentalMathPath(selectedGrade, problemType));
+    setSelectedMentalMathProblemType(problemType);
   };
 
   const handleQuizComplete = (score: number, total: number, problems: Problem[], answers: (number | null)[], timing?: TimedQuizResults) => {
@@ -148,6 +250,7 @@ function App() {
     pushPath('/');
     setSelectedGrade(null);
     setSelectedProblemType(null);
+    setSelectedMentalMathProblemType(null);
     setQuizResults(null);
     setScreen('grades');
   };
@@ -159,6 +262,11 @@ function App() {
     setSelectedProblemType(null);
     setQuizResults(null);
     setScreen('problemTypes');
+  };
+
+  const handleStartPracticeFromLibrary = (problemType: ProblemType) => {
+    setSelectedMentalMathProblemType(problemType);
+    handleProblemTypeSelect(problemType);
   };
 
   return (
@@ -182,6 +290,7 @@ function App() {
           onSelect={handleProblemTypeSelect}
           onBack={handleBackToGrades}
           onPrintWorksheet={handleOpenWorksheetModal}
+          onOpenMentalMathLibrary={handleOpenMentalMathLibrary}
           timerConfig={timerConfig}
           onTimerToggle={toggleTimer}
           onOpenTimerSettings={() => setShowTimerSettings(true)}
@@ -190,8 +299,21 @@ function App() {
         />
       )}
 
+      {screen === 'mentalMathLibrary' && selectedGrade && (
+        <MentalMathLibrary
+          grade={selectedGrade}
+          activeProblemType={selectedMentalMathProblemType}
+          onBack={handleBackToProblemTypes}
+          onSelectProblemType={handleMentalMathProblemTypeSelect}
+          onStartPractice={handleStartPracticeFromLibrary}
+          theme={theme}
+          onToggleTheme={toggleTheme}
+        />
+      )}
+
       {screen === 'quiz' && selectedProblemType && (
         <Quiz
+          grade={selectedGrade!}
           problemType={selectedProblemType}
           onComplete={handleQuizComplete}
           onBack={handleBackToProblemTypes}

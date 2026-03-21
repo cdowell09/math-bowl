@@ -1,12 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Problem, ProblemType } from '../types';
+import { GradeConfig, Problem, ProblemType } from '../types';
 import { TimerConfig, TimedQuizResults, DEFAULT_TIMER_CONFIG } from '../types/timer';
 import { useTimer } from '../hooks/useTimer';
 import { TimerDisplay } from './TimerDisplay';
 import { Theme } from '../hooks/useTheme';
 import { ThemeToggle } from './ThemeToggle';
+import { getMentalMathGuide } from '../lib/mentalMath/guides';
+import { MentalMathTipCard } from './mentalMath';
 
 interface QuizProps {
+  grade: GradeConfig;
   problemType: ProblemType;
   onComplete: (score: number, total: number, problems: Problem[], answers: (number | null)[], timing?: TimedQuizResults) => void;
   onBack: () => void;
@@ -19,7 +22,7 @@ const QUIZ_SIZE = 10;
 
 const isSurpriseMe = (problemType: ProblemType) => problemType.id === 'surprise-me';
 
-export function Quiz({ problemType, onComplete, onBack, timerConfig, theme, onToggleTheme }: QuizProps) {
+export function Quiz({ grade, problemType, onComplete, onBack, timerConfig, theme, onToggleTheme }: QuizProps) {
   const [problems, setProblems] = useState<Problem[]>([]);
   const [answers, setAnswers] = useState<(string)[]>([]);
   const [hasStarted, setHasStarted] = useState(false);
@@ -96,6 +99,7 @@ export function Quiz({ problemType, onComplete, onBack, timerConfig, theme, onTo
 
   const allAnswered = answers.every(a => a !== '');
   const canSubmit = timer.isTimerEnabled ? true : allAnswered;
+  const mentalMathGuide = !isSurpriseMe(problemType) ? getMentalMathGuide(grade.grade, problemType.id) : null;
 
   return (
     <div className="quiz">
@@ -118,6 +122,8 @@ export function Quiz({ problemType, onComplete, onBack, timerConfig, theme, onTo
       </div>
       <h2>{problemType.name}</h2>
       <p className="quiz-instructions">{problemType.description}</p>
+
+      {mentalMathGuide && <MentalMathTipCard guide={mentalMathGuide} className="quiz-mental-math-tip" />}
 
       <div className="problems-list">
         {problems.map((problem, index) => (

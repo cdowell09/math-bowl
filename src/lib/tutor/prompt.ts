@@ -1,5 +1,6 @@
 import type { TutorRequest } from '../../types/tutor';
 import { MAX_TUTOR_MESSAGES } from './validation.js';
+import { getMentalMathGuideForProblem, summarizeMentalMathGuide } from '../mentalMath/guides';
 
 export interface TutorPrompt {
   system: string;
@@ -20,6 +21,10 @@ function formatTutorMessages(messages: TutorRequest['messages']): string {
 }
 
 export function buildTutorPrompt(request: TutorRequest): TutorPrompt {
+  const guideSummary = summarizeMentalMathGuide(
+    getMentalMathGuideForProblem(request.grade, request.problemType)
+  );
+
   return {
     system: [
       'You are an elementary math coach.',
@@ -39,6 +44,7 @@ export function buildTutorPrompt(request: TutorRequest): TutorPrompt {
       `Problem: ${request.problemDisplay}`,
       `Correct answer: ${request.correctAnswer}`,
       `Student answer: ${request.studentAnswer ?? 'No answer given'}`,
+      `Mental math guide: ${guideSummary || 'none'}`,
       formatTutorMessages(request.messages),
     ].join('\n'),
   };

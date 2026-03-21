@@ -13,6 +13,7 @@ import { useTutorTts } from '../hooks/useTutorTts';
 import { ProblemTutorButton } from './ProblemTutorButton';
 import { TutorPanel } from './TutorPanel';
 import { isResultsTutorEnabled, isTutorTtsEnabled } from '../lib/tutor/featureFlags';
+import { getMentalMathGuideForProblem } from '../lib/mentalMath/guides';
 
 interface ResultsProps {
   score: number;
@@ -114,39 +115,61 @@ export function Results({ score, total, problems, answers, onTryAgain, onBack, t
               const userAnswer = answers[index];
               const isCorrect = userAnswer !== null && Math.abs(userAnswer - problem.answer) < 0.001;
               const isActiveProblem = activeTutorProblemId === problem.id;
+              const guide = !isCorrect
+                ? getMentalMathGuideForProblem(grade.grade, problem.typeName || problem.type) ??
+                  getMentalMathGuideForProblem(grade.grade, problem.type)
+                : null;
+              const topMove = guide?.coreMoves[0] ?? null;
 
               return (
                 <div key={problem.id} className={`result-row ${isCorrect ? 'correct' : 'incorrect'}`}>
-                  <div className="result-main">
-                    <span className="result-icon">{isCorrect ? '✓' : '✗'}</span>
-                    <span className="result-problem">{problem.display}</span>
-                  </div>
-                  <div className="result-answer">
-                    {isCorrect ? (
-                      <strong>{problem.answer}</strong>
-                    ) : (
-                      <>
-                        <span className="wrong-answer">{answers[index] ?? '—'}</span>
-                        {' → '}
+                  <div className="result-summary">
+                    <div className="result-main">
+                      <span className="result-icon">{isCorrect ? '✓' : '✗'}</span>
+                      <span className="result-problem">{problem.display}</span>
+                    </div>
+                    <div className="result-answer">
+                      {isCorrect ? (
                         <strong>{problem.answer}</strong>
-                      </>
-                    )}
+                      ) : (
+                        <>
+                          <span className="wrong-answer">{answers[index] ?? '—'}</span>
+                          {' → '}
+                          <strong>{problem.answer}</strong>
+                        </>
+                      )}
+                    </div>
                   </div>
-                  {tutorEnabled && !isCorrect && (
-                    <ProblemTutorButton
-                      onClick={() => {
-                        resolvedTts?.onStopPlayback();
-                        setActiveTutorProblemId(problem.id);
-                        void tutor.openTutor({
-                          grade: grade.grade,
-                          problemType: problem.typeName || problemType.name,
-                          problemDisplay: problem.display,
-                          correctAnswer: problem.answer,
-                          studentAnswer: userAnswer,
-                        });
-                      }}
-                      isActive={isActiveProblem}
-                    />
+                  {!isCorrect && (topMove || tutorEnabled) && (
+                    <div className="result-followup">
+                      {topMove && (
+                        <div className="result-mental-math-tip">
+                          <span className="result-mental-math-label">Mental Math Move</span>
+                          <strong>{topMove.title}</strong>
+                          <span>{topMove.kidFriendlyRule}</span>
+                        </div>
+                      )}
+
+                      {tutorEnabled && (
+                        <div className="result-followup-actions">
+                          <span className="result-followup-prompt">Want a walkthrough?</span>
+                          <ProblemTutorButton
+                            onClick={() => {
+                              resolvedTts?.onStopPlayback();
+                              setActiveTutorProblemId(problem.id);
+                              void tutor.openTutor({
+                                grade: grade.grade,
+                                problemType: problem.typeName || problemType.name,
+                                problemDisplay: problem.display,
+                                correctAnswer: problem.answer,
+                                studentAnswer: userAnswer,
+                              });
+                            }}
+                            isActive={isActiveProblem}
+                          />
+                        </div>
+                      )}
+                    </div>
                   )}
                 </div>
               );

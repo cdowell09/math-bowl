@@ -1,4 +1,5 @@
 import { Worksheet } from '../../types/worksheet';
+import { getMentalMathGuide } from '../../lib/mentalMath/guides';
 
 interface WorksheetPrintViewProps {
   worksheet: Worksheet | null;
@@ -6,6 +7,8 @@ interface WorksheetPrintViewProps {
 
 export function WorksheetPrintView({ worksheet }: WorksheetPrintViewProps) {
   if (!worksheet) return null;
+
+  const guide = getMentalMathGuide(worksheet.grade, worksheet.problemTypeId);
 
   return (
     <div className="worksheet-print-view">
@@ -24,6 +27,20 @@ export function WorksheetPrintView({ worksheet }: WorksheetPrintViewProps) {
             </li>
           ))}
         </ol>
+
+        {guide && (
+          <section className="print-strategy-box">
+            <h2>Fast ways to think</h2>
+            <p>{guide.gamePlan.bestFirstMove}</p>
+            <ul>
+              {guide.coreMoves.slice(0, 2).map((move) => (
+                <li key={move.id}>
+                  <strong>{move.title}:</strong> {move.kidFriendlyRule}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
       </div>
 
       {worksheet.includeAnswerKey && (
