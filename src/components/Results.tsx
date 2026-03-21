@@ -9,9 +9,10 @@ import { PrintWorksheetButton } from './worksheet';
 import { Theme } from '../hooks/useTheme';
 import { ThemeToggle } from './ThemeToggle';
 import { useProblemTutor } from '../hooks/useProblemTutor';
+import { useTutorTts } from '../hooks/useTutorTts';
 import { ProblemTutorButton } from './ProblemTutorButton';
 import { TutorPanel } from './TutorPanel';
-import { isResultsTutorEnabled } from '../lib/tutor/featureFlags';
+import { isResultsTutorEnabled, isTutorTtsEnabled } from '../lib/tutor/featureFlags';
 
 interface ResultsProps {
   score: number;
@@ -29,12 +30,47 @@ interface ResultsProps {
   onOpenTimerSettings: () => void;
   theme: Theme;
   onToggleTheme: () => void;
+  tts?: TutorTtsControls;
 }
 
-export function Results({ score, total, problems, answers, onTryAgain, onBack, timing, onPrintWorksheet, grade, problemType, timerConfig, onTimerToggle, onOpenTimerSettings, theme, onToggleTheme }: ResultsProps) {
+type TutorTtsStatus = 'idle' | 'loading' | 'speaking';
+
+interface TutorTtsControls {
+  canPlayLatestAssistantMessage: boolean;
+  ttsStatus: TutorTtsStatus;
+  ttsStatusMessage?: string | null;
+  onPlayLatestAssistantMessage: () => void | Promise<void>;
+  onStopPlayback: () => void;
+}
+
+export function Results({ score, total, problems, answers, onTryAgain, onBack, timing, onPrintWorksheet, grade, problemType, timerConfig, onTimerToggle, onOpenTimerSettings, theme, onToggleTheme, tts }: ResultsProps) {
   const tutor = useProblemTutor();
   const [activeTutorProblemId, setActiveTutorProblemId] = useState<string | null>(null);
   const tutorEnabled = isResultsTutorEnabled();
+  const tutorTtsEnabled = isTutorTtsEnabled();
+  const internalTts = useTutorTts({
+    enabled: tutorTtsEnabled && tutor.isOpen,
+    sessionKey: activeTutorProblemId ?? undefined,
+    messages: tutor.messages,
+  });
+  const resolvedTts: TutorTtsControls | undefined = tts ?? (tutorTtsEnabled
+    ? {
+        canPlayLatestAssistantMessage: internalTts.canPlayLatestAssistantMessage,
+        ttsStatus:
+          internalTts.status === 'loading' || internalTts.status === 'speaking'
+            ? internalTts.status
+            : 'idle',
+        ttsStatusMessage:
+          internalTts.error ??
+          (internalTts.isUsingFallbackVoice
+            ? internalTts.isKokoroReady
+              ? 'Using device voice for this reply.'
+              : 'Torch voice is warming up. Using your device voice for now.'
+            : internalTts.statusMessage),
+        onPlayLatestAssistantMessage: internalTts.playLatestAssistantMessage,
+        onStopPlayback: internalTts.stopPlayback,
+      }
+    : undefined);
   const percentage = Math.round((score / total) * 100);
 
   const getMessage = () => {
@@ -99,6 +135,7 @@ export function Results({ score, total, problems, answers, onTryAgain, onBack, t
                   {tutorEnabled && !isCorrect && (
                     <ProblemTutorButton
                       onClick={() => {
+                        resolvedTts?.onStopPlayback();
                         setActiveTutorProblemId(problem.id);
                         void tutor.openTutor({
                           grade: grade.grade,
@@ -143,12 +180,15 @@ export function Results({ score, total, problems, answers, onTryAgain, onBack, t
             messages={tutor.messages}
             isLoading={tutor.isLoading}
             error={tutor.error}
+            tts={resolvedTts}
             onSendMessage={tutor.sendMessage}
             onClose={() => {
+              resolvedTts?.onStopPlayback();
               setActiveTutorProblemId(null);
               tutor.closeTutor();
             }}
             onReset={() => {
+              resolvedTts?.onStopPlayback();
               if (!tutor.activeProblem) {
                 setActiveTutorProblemId(null);
                 tutor.closeTutor();

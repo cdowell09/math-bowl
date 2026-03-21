@@ -3,6 +3,16 @@ import type { FormEvent } from 'react';
 import type { TutorMessage, TutorProblemContext, TutorResponse } from '../types/tutor';
 import { TutorMarkdown } from './TutorMarkdown';
 
+type TutorTtsStatus = 'idle' | 'loading' | 'speaking';
+
+interface TutorTtsControls {
+  canPlayLatestAssistantMessage: boolean;
+  ttsStatus: TutorTtsStatus;
+  ttsStatusMessage?: string | null;
+  onPlayLatestAssistantMessage: () => void | Promise<void>;
+  onStopPlayback: () => void;
+}
+
 interface TutorPanelProps {
   isOpen: boolean;
   activeProblem: TutorProblemContext | null;
@@ -10,6 +20,7 @@ interface TutorPanelProps {
   messages: TutorMessage[];
   isLoading: boolean;
   error: string | null;
+  tts?: TutorTtsControls;
   onSendMessage: (content: string) => void | Promise<void>;
   onClose: () => void;
   onReset: () => void;
@@ -65,6 +76,7 @@ export function TutorPanel({
   messages,
   isLoading,
   error,
+  tts,
   onSendMessage,
   onClose,
   onReset,
@@ -79,6 +91,9 @@ export function TutorPanel({
   const visibleMessages = getVisibleMessages(messages, response);
   const latestMessage = visibleMessages[visibleMessages.length - 1] ?? null;
   const latestTurnKey = `${latestMessage?.role ?? 'none'}:${latestMessage?.content ?? ''}:${isLoading ? 'loading' : 'idle'}`;
+  const isReadAloudBusy = tts?.ttsStatus !== 'idle';
+  const readAloudLabel = tts?.ttsStatus === 'loading' ? 'Loading voice...' : tts?.ttsStatus === 'speaking' ? 'Stop' : 'Read aloud';
+  const isReadAloudDisabled = !tts?.canPlayLatestAssistantMessage && !isReadAloudBusy;
 
   const clearUserScrollIntentTimeout = () => {
     if (userScrollIntentTimeoutRef.current !== null) {
@@ -160,8 +175,36 @@ export function TutorPanel({
     const content = draft.trim();
     if (!content) return;
 
+    tts?.onStopPlayback();
     setDraft('');
     await onSendMessage(content);
+  };
+
+  const handleClose = () => {
+    tts?.onStopPlayback();
+    onClose();
+  };
+
+  const handleReset = () => {
+    tts?.onStopPlayback();
+    onReset();
+  };
+
+  const handleReadAloud = () => {
+    if (!tts) {
+      return;
+    }
+
+    if (isReadAloudBusy) {
+      tts.onStopPlayback();
+      return;
+    }
+
+    if (!tts.canPlayLatestAssistantMessage) {
+      return;
+    }
+
+    void tts.onPlayLatestAssistantMessage();
   };
 
   useEffect(() => {
@@ -200,7 +243,7 @@ export function TutorPanel({
           <p className="tutor-panel-eyebrow">Math help</p>
           <h3>Torch the Tutor</h3>
         </div>
-        <button type="button" className="tutor-panel-close" onClick={onClose}>
+        <button type="button" className="tutor-panel-close" onClick={handleClose}>
           Close
         </button>
       </div>
@@ -210,6 +253,21 @@ export function TutorPanel({
         <span className="tutor-context-pill">You said {formatAnswer(activeProblem.studentAnswer)}</span>
         <span className="tutor-context-pill">Correct answer {activeProblem.correctAnswer}</span>
       </div>
+
+      {tts && (
+        <div className="tutor-tts-controls" aria-label="Read aloud controls">
+          <button
+            type="button"
+            className={`tutor-tts-button${isReadAloudBusy ? ' tutor-tts-button--active' : ''}`}
+            onClick={handleReadAloud}
+            disabled={isReadAloudDisabled}
+            aria-pressed={isReadAloudBusy}
+          >
+            {readAloudLabel}
+          </button>
+          {tts.ttsStatusMessage && <p className="tutor-tts-status" role="status">{tts.ttsStatusMessage}</p>}
+        </div>
+      )}
 
       {isFallbackMode && (
         <div className="tutor-status-banner" role="status">
@@ -262,7 +320,7 @@ export function TutorPanel({
           </button>
         </form>
 
-        <button type="button" className="tutor-reset-button" onClick={onReset}>
+        <button type="button" className="tutor-reset-button" onClick={handleReset}>
           Start over
         </button>
       </div>

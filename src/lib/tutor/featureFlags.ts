@@ -1,5 +1,6 @@
 interface TutorFeatureEnv {
   VITE_ENABLE_RESULTS_TUTOR?: string;
+  VITE_ENABLE_TUTOR_TTS?: string;
 }
 
 function parseBooleanFlag(value: string | undefined): boolean {
@@ -21,4 +22,23 @@ export function isResultsTutorEnabled(env?: TutorFeatureEnv): boolean {
 
   const importMetaEnv = (import.meta as ImportMeta & { env?: TutorFeatureEnv }).env;
   return parseBooleanFlag(importMetaEnv?.VITE_ENABLE_RESULTS_TUTOR);
+}
+
+export function isTutorTtsEnabled(env?: TutorFeatureEnv): boolean {
+  const isResultsTutorActive = isResultsTutorEnabled(env);
+
+  if (!isResultsTutorActive) {
+    return false;
+  }
+
+  if (env !== undefined) {
+    return parseBooleanFlag(env.VITE_ENABLE_TUTOR_TTS);
+  }
+
+  if (typeof process !== 'undefined' && process.env?.VITE_ENABLE_TUTOR_TTS !== undefined) {
+    return parseBooleanFlag(process.env.VITE_ENABLE_TUTOR_TTS);
+  }
+
+  const importMetaEnv = (import.meta as ImportMeta & { env?: TutorFeatureEnv }).env;
+  return parseBooleanFlag(importMetaEnv?.VITE_ENABLE_TUTOR_TTS);
 }

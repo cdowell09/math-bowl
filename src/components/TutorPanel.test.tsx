@@ -1,5 +1,6 @@
 import type { ComponentProps } from 'react';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { TutorProblemContext, TutorResponse } from '../types/tutor';
 import { TutorPanel } from './TutorPanel';
@@ -32,6 +33,13 @@ function makeProps(overrides: Partial<ComponentProps<typeof TutorPanel>> = {}): 
     messages: [{ role: 'assistant', content: 'Start by finding how much the pattern grows each time.' }],
     isLoading: false,
     error: null,
+    tts: {
+      canPlayLatestAssistantMessage: true,
+      ttsStatus: 'idle',
+      ttsStatusMessage: null,
+      onPlayLatestAssistantMessage: vi.fn(),
+      onStopPlayback: vi.fn(),
+    },
     onSendMessage: vi.fn(),
     onClose: vi.fn(),
     onReset: vi.fn(),
@@ -286,5 +294,111 @@ describe('TutorPanel', () => {
     expect(
       screen.getByText(/live ai help is temporarily unavailable/i)
     ).toBeInTheDocument();
+  });
+
+  it('shows read aloud controls with the expected labels', () => {
+    const { rerender } = render(
+      <TutorPanel
+        {...makeProps({
+          tts: {
+            canPlayLatestAssistantMessage: true,
+            ttsStatus: 'idle',
+            ttsStatusMessage: null,
+            onPlayLatestAssistantMessage: vi.fn(),
+            onStopPlayback: vi.fn(),
+          },
+        })}
+      />
+    );
+
+    expect(screen.getByRole('button', { name: /read aloud/i })).toBeInTheDocument();
+
+    rerender(
+      <TutorPanel
+        {...makeProps({
+          tts: {
+            canPlayLatestAssistantMessage: true,
+            ttsStatus: 'loading',
+            ttsStatusMessage: 'Downloading Torch voice... 42%',
+            onPlayLatestAssistantMessage: vi.fn(),
+            onStopPlayback: vi.fn(),
+          },
+        })}
+      />
+    );
+
+    expect(screen.getByRole('button', { name: /loading voice/i })).toBeInTheDocument();
+    expect(screen.getByText(/downloading torch voice/i)).toBeInTheDocument();
+
+    rerender(
+      <TutorPanel
+        {...makeProps({
+          tts: {
+            canPlayLatestAssistantMessage: true,
+            ttsStatus: 'speaking',
+            ttsStatusMessage: 'Torch is reading the answer now.',
+            onPlayLatestAssistantMessage: vi.fn(),
+            onStopPlayback: vi.fn(),
+          },
+        })}
+      />
+    );
+
+    expect(screen.getByRole('button', { name: /^stop$/i })).toBeInTheDocument();
+
+    rerender(
+      <TutorPanel
+        {...makeProps({
+          tts: {
+            canPlayLatestAssistantMessage: true,
+            ttsStatus: 'idle',
+            ttsStatusMessage: 'Torch voice ready on WebGPU.',
+            onPlayLatestAssistantMessage: vi.fn(),
+            onStopPlayback: vi.fn(),
+          },
+        })}
+      />
+    );
+
+    expect(screen.getByText(/torch voice ready on webgpu/i)).toBeInTheDocument();
+  });
+
+  it('stops playback when closing, resetting, or sending a new message', async () => {
+    const onStopPlayback = vi.fn();
+    const onSendMessage = vi.fn();
+    const onClose = vi.fn();
+    const onReset = vi.fn();
+
+    render(
+      <TutorPanel
+        {...makeProps({
+          tts: {
+            canPlayLatestAssistantMessage: true,
+            ttsStatus: 'speaking',
+            ttsStatusMessage: 'Torch is reading the answer now.',
+            onPlayLatestAssistantMessage: vi.fn(),
+            onStopPlayback,
+          },
+          onSendMessage,
+          onClose,
+          onReset,
+        })}
+      />
+    );
+
+    const user = userEvent.setup();
+    await user.click(screen.getByRole('button', { name: /close/i }));
+    expect(onStopPlayback).toHaveBeenCalledTimes(1);
+    expect(onClose).toHaveBeenCalledTimes(1);
+
+    await user.click(screen.getByRole('button', { name: /start over/i }));
+    expect(onStopPlayback).toHaveBeenCalledTimes(2);
+    expect(onReset).toHaveBeenCalledTimes(1);
+
+    await user.type(screen.getByLabelText(/ask for help/i), 'I need another hint');
+    await user.click(screen.getByRole('button', { name: /send/i }));
+
+    expect(onStopPlayback).toHaveBeenCalledTimes(3);
+    expect(onSendMessage).toHaveBeenCalledWith('I need another hint');
   });
 });

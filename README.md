@@ -94,11 +94,13 @@ GEMINI_API_KEY=your_gemini_api_key
 GEMINI_MODEL=gemini-3.1-flash-lite-preview
 GEMINI_TIMEOUT_MS=12000
 VITE_ENABLE_RESULTS_TUTOR=true
+VITE_ENABLE_TUTOR_TTS=true
 ```
 
 2. For the full tutor flow, start the app with `npx vercel dev` so the `/api/tutor` route is available locally.
 3. If you only run `npm run dev`, you will still see the frontend, but the tutor panel cannot fetch responses because Vite does not serve the API route.
 4. Finish a quiz and open a missed problem from the `Results` screen to launch the tutor panel.
+5. Use `Read aloud` in Torch to lazy-load Kokoro in the browser and hear the latest tutor reply. If Kokoro fails to load, Torch falls back to the device voice for that attempt.
 
 The tutor backend uses `gemini-3.1-flash-lite-preview` with Gemini thinking set to `low` for faster explanations.
 

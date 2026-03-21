@@ -1,3 +1,4 @@
+import type { ComponentProps } from 'react';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -5,6 +6,47 @@ import type { GradeConfig, Problem, ProblemType } from '../types';
 import type { TimerConfig } from '../types/timer';
 import { Results } from './Results';
 import type { Theme } from '../hooks/useTheme';
+
+class MockTtsWorker {
+  readonly postMessage = vi.fn((message: { id: number; type: string }) => {
+    if (message.type === 'preload') {
+      queueMicrotask(() => {
+        this.emit('message', {
+          type: 'backend-selected',
+          backend: 'wasm',
+        });
+        this.emit('message', {
+          type: 'ready',
+          id: message.id,
+          backend: 'wasm',
+        });
+      });
+    }
+  });
+
+  private readonly listeners = new Map<string, Set<(event: MessageEvent) => void>>();
+
+  constructor(_scriptUrl?: string | URL, _options?: WorkerOptions) {}
+
+  addEventListener(type: string, listener: (event: MessageEvent) => void) {
+    const nextListeners = this.listeners.get(type) ?? new Set<(event: MessageEvent) => void>();
+    nextListeners.add(listener);
+    this.listeners.set(type, nextListeners);
+  }
+
+  removeEventListener(type: string, listener: (event: MessageEvent) => void) {
+    this.listeners.get(type)?.delete(listener);
+  }
+
+  terminate() {}
+
+  private emit(type: string, data: unknown) {
+    const event = { data } as MessageEvent;
+    for (const listener of this.listeners.get(type) ?? []) {
+      listener(event);
+    }
+  }
+}
 
 function makeProblem(overrides: Partial<Problem> = {}): Problem {
   return {
@@ -33,7 +75,7 @@ function makeProblemType(): ProblemType {
   };
 }
 
-function renderResults() {
+function renderResults(tts?: NonNullable<ComponentProps<typeof Results>['tts']>) {
   const timerConfig: TimerConfig = {
     mode: 'none',
     secondsPerProblem: 30,
@@ -57,6 +99,7 @@ function renderResults() {
       onOpenTimerSettings={vi.fn()}
       theme={theme}
       onToggleTheme={vi.fn()}
+      tts={tts}
     />
   );
 }
@@ -69,12 +112,42 @@ describe('Results', () => {
 
   beforeEach(() => {
     vi.stubEnv('VITE_ENABLE_RESULTS_TUTOR', 'true');
+    vi.stubEnv('VITE_ENABLE_TUTOR_TTS', 'true');
+    vi.stubGlobal('Worker', MockTtsWorker);
   });
 
   it('shows a help button for each incorrect answer', () => {
     renderResults();
 
     expect(screen.getAllByRole('button', { name: /get help from torch/i })).toHaveLength(1);
+  });
+
+  it('shows read aloud controls when torch tts is enabled without an injected test prop', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => {
+        return new Response(
+          JSON.stringify({
+            summary: 'Start with the problem you picked.',
+            hint: null,
+            nextQuestion: null,
+            workedExample: null,
+            messages: [{ role: 'assistant', content: 'Start with the problem you picked.' }],
+          }),
+          {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          }
+        );
+      })
+    );
+
+    renderResults();
+
+    const user = userEvent.setup();
+    await user.click(screen.getAllByRole('button', { name: /get help from torch/i })[0]);
+
+    expect(await screen.findByRole('button', { name: /read aloud/i })).toBeInTheDocument();
   });
 
   it('tracks the active tutor row by problem id', async () => {
