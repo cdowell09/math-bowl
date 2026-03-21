@@ -12,7 +12,9 @@ export interface WorksheetConfig {
 export interface Worksheet {
   id: string;
   title: string;
+  grade: number;
   gradeName: string;
+  problemTypeId: string;
   problemTypeName: string;
   problems: Problem[];
   includeAnswerKey: boolean;

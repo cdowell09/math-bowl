@@ -1,4 +1,4 @@
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { GradeConfig, Problem, ProblemType } from '../types';
@@ -63,6 +63,7 @@ function renderResults() {
 
 describe('Results', () => {
   afterEach(() => {
+    cleanup();
     vi.unstubAllGlobals();
     vi.unstubAllEnvs();
   });
@@ -75,6 +76,24 @@ describe('Results', () => {
     renderResults();
 
     expect(screen.getAllByRole('button', { name: /get help from torch/i })).toHaveLength(1);
+  });
+
+  it('shows a mental math move for incorrect answers', () => {
+    renderResults();
+
+    const incorrectRow = screen.getByText('9 - 4 =').closest('.result-row');
+    expect(incorrectRow).not.toBeNull();
+
+    const row = incorrectRow as HTMLElement;
+    const followUp = row.querySelector('.result-followup');
+    const tip = row.querySelector('.result-mental-math-tip');
+
+    expect(followUp).not.toBeNull();
+    expect(tip).not.toBeNull();
+    expect(within(followUp as HTMLElement).getByRole('button', { name: /get help from torch/i })).toBeInTheDocument();
+    expect(within(followUp as HTMLElement).getByText(/want a walkthrough\?/i)).toBeInTheDocument();
+    expect(within(tip as HTMLElement).getByText(/mental math move/i)).toBeInTheDocument();
+    expect(within(tip as HTMLElement).getByText(/Tens Then Ones/i)).toBeInTheDocument();
   });
 
   it('tracks the active tutor row by problem id', async () => {

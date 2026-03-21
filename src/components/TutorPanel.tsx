@@ -70,6 +70,7 @@ export function TutorPanel({
   onReset,
 }: TutorPanelProps) {
   const [draft, setDraft] = useState('');
+  const panelRef = useRef<HTMLElement | null>(null);
   const messageListRef = useRef<HTMLDivElement | null>(null);
   const shouldAutoFollowRef = useRef(true);
   const isProgrammaticScrollRef = useRef(false);
@@ -169,6 +170,22 @@ export function TutorPanel({
   }, [activeProblem?.problemDisplay]);
 
   useEffect(() => {
+    if (!isOpen || !activeProblem) {
+      return;
+    }
+
+    if (typeof panelRef.current?.scrollIntoView !== 'function') {
+      return;
+    }
+
+    panelRef.current.scrollIntoView({
+      block: 'start',
+      behavior: 'smooth',
+      inline: 'nearest',
+    });
+  }, [activeProblem, isOpen]);
+
+  useEffect(() => {
     return () => {
       clearAutoScrollFrames();
       clearUserScrollIntentTimeout();
@@ -194,7 +211,7 @@ export function TutorPanel({
   const isFallbackMode = response?.mode === 'fallback';
 
   return (
-    <aside className="tutor-panel" aria-label="Math tutor panel">
+    <aside ref={panelRef} className="tutor-panel" aria-label="Math tutor panel">
       <div className="tutor-panel-header">
         <div>
           <p className="tutor-panel-eyebrow">Math help</p>

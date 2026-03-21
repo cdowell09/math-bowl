@@ -287,4 +287,33 @@ describe('TutorPanel', () => {
       screen.getByText(/live ai help is temporarily unavailable/i)
     ).toBeInTheDocument();
   });
+
+  it('scrolls the tutor panel into view when it opens', async () => {
+    const scrollIntoView = vi.fn();
+    const originalScrollIntoView = HTMLElement.prototype.scrollIntoView;
+    HTMLElement.prototype.scrollIntoView = scrollIntoView;
+
+    try {
+      const { rerender } = render(
+        <TutorPanel
+          {...makeProps({
+            isOpen: false,
+            activeProblem: null,
+          })}
+        />
+      );
+
+      rerender(<TutorPanel {...makeProps()} />);
+
+      await waitFor(() => {
+        expect(scrollIntoView).toHaveBeenCalledWith({
+          block: 'start',
+          behavior: 'smooth',
+          inline: 'nearest',
+        });
+      });
+    } finally {
+      HTMLElement.prototype.scrollIntoView = originalScrollIntoView;
+    }
+  });
 });

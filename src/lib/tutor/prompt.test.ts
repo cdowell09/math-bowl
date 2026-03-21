@@ -68,4 +68,19 @@ describe('buildTutorPrompt', () => {
     expect(prompt.user).toContain('USER: message 3');
     expect(prompt.user).toContain('ASSISTANT: message 8');
   });
+
+  it('includes the matching mental math guide summary for the active topic', () => {
+    const prompt = buildTutorPrompt({
+      grade: 4,
+      problemType: 'Elapsed Time',
+      problemDisplay: '2:35 to 4:10 =',
+      correctAnswer: 95,
+      studentAnswer: 80,
+      messages: [],
+    });
+
+    expect(prompt.user).toContain('Mental math guide:');
+    expect(prompt.user).toContain('Elapsed Time Mental Math Moves');
+    expect(prompt.user).toContain('Jump to the Next Hour');
+  });
 });
