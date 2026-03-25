@@ -13,10 +13,6 @@ const conversions: ConversionType[] = [
   { from: 'm', to: 'mm', factor: 1000, maxValue: 5 },
   { from: 'cm', to: 'mm', factor: 10, maxValue: 100 },
   { from: 'km', to: 'm', factor: 1000, maxValue: 5 },
-  // Mass
-  { from: 'kg', to: 'g', factor: 1000, maxValue: 5 },
-  // Volume
-  { from: 'L', to: 'mL', factor: 1000, maxValue: 5 },
 ];
 
 export function generateMetricConversion(): Problem {
