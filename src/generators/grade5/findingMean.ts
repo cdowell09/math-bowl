@@ -4,8 +4,8 @@ export function generateFindingMean(): Problem {
   // Finding the mean (average)
   // e.g., Find the mean: 4, 9, 8, 4, 6
 
-  // Generate 4-6 numbers that will have an integer average
-  const count = Math.floor(Math.random() * 3) + 4; // 4-6 numbers
+  // Generate exactly 5 numbers that will have an integer average
+  const count = 5;
 
   // Generate a target mean first, then build numbers around it
   const targetMean = Math.floor(Math.random() * 15) + 3; // 3-17
