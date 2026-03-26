@@ -83,4 +83,18 @@ describe('buildTutorPrompt', () => {
     expect(prompt.user).toContain('Elapsed Time Mental Math Moves');
     expect(prompt.user).toContain('Jump to the Next Hour');
   });
+
+  it('constrains grade 3 metric conversions to length units only', () => {
+    const prompt = buildTutorPrompt({
+      grade: 3,
+      problemType: 'metricConversions',
+      problemDisplay: '2 m = ___ mm',
+      correctAnswer: 2000,
+      studentAnswer: 200,
+      messages: [],
+    });
+
+    expect(prompt.system).toContain('Only use metric length conversions');
+    expect(prompt.system).toContain('Never introduce mass or capacity units');
+  });
 });

@@ -17,7 +17,7 @@ export const grade3: GradeConfig = {
     {
       id: 'metricConversions',
       name: 'Metric Conversions',
-      description: 'Convert between metric units',
+      description: 'Convert between metric length units',
       generate: generateMetricConversion
     },
     {
