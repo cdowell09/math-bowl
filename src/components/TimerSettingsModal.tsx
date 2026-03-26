@@ -9,27 +9,62 @@ interface TimerSettingsModalProps {
 
 export function TimerSettingsModal({ config, onSave, onClose }: TimerSettingsModalProps) {
   const [localConfig, setLocalConfig] = useState<TimerConfig>(config);
+  const [secondsInput, setSecondsInput] = useState(() => String(config.secondsPerProblem));
+  const [minutesInput, setMinutesInput] = useState(() => String(config.totalMinutes));
 
   const handleModeChange = (mode: TimerMode) => {
     setLocalConfig(prev => ({ ...prev, mode }));
   };
 
   const handleSecondsChange = (value: string) => {
-    const num = parseInt(value, 10);
+    const sanitized = value.replace(/\D/g, '');
+    setSecondsInput(sanitized);
+
+    const num = parseInt(sanitized, 10);
     if (!isNaN(num) && num >= 5 && num <= 120) {
       setLocalConfig(prev => ({ ...prev, secondsPerProblem: num }));
     }
   };
 
   const handleMinutesChange = (value: string) => {
-    const num = parseInt(value, 10);
+    const sanitized = value.replace(/\D/g, '');
+    setMinutesInput(sanitized);
+
+    const num = parseInt(sanitized, 10);
     if (!isNaN(num) && num >= 1 && num <= 30) {
       setLocalConfig(prev => ({ ...prev, totalMinutes: num }));
     }
   };
 
+  const commitSecondsInput = () => {
+    const num = parseInt(secondsInput, 10);
+    const normalized = isNaN(num)
+      ? localConfig.secondsPerProblem
+      : Math.max(5, Math.min(120, num));
+
+    setSecondsInput(String(normalized));
+    setLocalConfig(prev => ({ ...prev, secondsPerProblem: normalized }));
+    return normalized;
+  };
+
+  const commitMinutesInput = () => {
+    const num = parseInt(minutesInput, 10);
+    const normalized = isNaN(num)
+      ? localConfig.totalMinutes
+      : Math.max(1, Math.min(30, num));
+
+    setMinutesInput(String(normalized));
+    setLocalConfig(prev => ({ ...prev, totalMinutes: normalized }));
+    return normalized;
+  };
+
   const handleSave = () => {
-    onSave(localConfig);
+    const normalizedConfig: TimerConfig = {
+      ...localConfig,
+      secondsPerProblem: commitSecondsInput(),
+      totalMinutes: commitMinutesInput(),
+    };
+    onSave(normalizedConfig);
     onClose();
   };
 
@@ -73,8 +108,11 @@ export function TimerSettingsModal({ config, onSave, onClose }: TimerSettingsMod
                 type="number"
                 min="5"
                 max="120"
-                value={localConfig.secondsPerProblem}
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={secondsInput}
                 onChange={e => handleSecondsChange(e.target.value)}
+                onBlur={commitSecondsInput}
                 className="number-input"
               />
               <span className="input-hint">5-120 seconds</span>
@@ -93,8 +131,11 @@ export function TimerSettingsModal({ config, onSave, onClose }: TimerSettingsMod
                 type="number"
                 min="1"
                 max="30"
-                value={localConfig.totalMinutes}
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={minutesInput}
                 onChange={e => handleMinutesChange(e.target.value)}
+                onBlur={commitMinutesInput}
                 className="number-input"
               />
               <span className="input-hint">1-30 minutes</span>
