@@ -9,17 +9,19 @@ export function generateFourOperations(): Problem {
     nums.push(Math.floor(Math.random() * 9) + 1); // 1-9
   }
 
-  for (let i = 0; i < 3; i++) {
-    ops.push(Math.random() > 0.5 ? '+' : '-');
-  }
-
-  // Calculate answer
+  // Build operators while keeping the running total non-negative
   let answer = nums[0];
   for (let i = 0; i < 3; i++) {
-    if (ops[i] === '+') {
-      answer += nums[i + 1];
+    const nextNum = nums[i + 1];
+    const randomOp = Math.random() > 0.5 ? '+' : '-';
+    const op = randomOp === '-' && answer - nextNum < 0 ? '+' : randomOp;
+
+    ops.push(op);
+
+    if (op === '+') {
+      answer += nextNum;
     } else {
-      answer -= nums[i + 1];
+      answer -= nextNum;
     }
   }
 
