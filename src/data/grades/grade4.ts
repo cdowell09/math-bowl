@@ -29,7 +29,7 @@ export const grade4: GradeConfig = {
     {
       id: 'elapsedTime',
       name: 'Elapsed Time',
-      description: 'Calculate time between two times (answer in minutes)',
+      description: 'Calculate time between two times (answer in minutes or hours and minutes)',
       generate: generateElapsedTime
     }
   ]

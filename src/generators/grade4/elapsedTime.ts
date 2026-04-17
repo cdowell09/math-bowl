@@ -2,7 +2,7 @@ import { Problem } from '../../types';
 
 export function generateElapsedTime(): Problem {
   // Generate elapsed time problems
-  // e.g., 12:14 a.m. to 3:31 a.m. (answer in minutes)
+  // e.g., 12:14 a.m. to 3:31 a.m.
 
   // Decide if we're staying within same period (a.m. or p.m.) or crossing
   const stayWithinPeriod = Math.random() < 0.7; // 70% chance to stay within same period
@@ -46,7 +46,7 @@ export function generateElapsedTime(): Problem {
 
     return {
       id: crypto.randomUUID(),
-      display: `${formatTime(startHour, startMinute)} ${period} to ${formatTime(endHour, endMinute)} ${period} = ___ minutes`,
+      display: `${formatTime(startHour, startMinute)} ${period} to ${formatTime(endHour, endMinute)} ${period} = ___`,
       answer: elapsedMinutes,
       type: 'elapsedTime',
       typeName: 'Elapsed Time'
@@ -88,7 +88,7 @@ export function generateElapsedTime(): Problem {
 
     return {
       id: crypto.randomUUID(),
-      display: `${formatTime(startHour, startMinute)} ${period} to ${formatTime(endHour, endMinute)} ${period} = ___ minutes`,
+      display: `${formatTime(startHour, startMinute)} ${period} to ${formatTime(endHour, endMinute)} ${period} = ___`,
       answer: elapsedMinutes,
       type: 'elapsedTime',
       typeName: 'Elapsed Time'

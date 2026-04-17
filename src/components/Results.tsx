@@ -14,6 +14,7 @@ import { ProblemTutorButton } from './ProblemTutorButton';
 import { TutorPanel } from './TutorPanel';
 import { isResultsTutorEnabled, isTutorTtsEnabled } from '../lib/tutor/featureFlags';
 import { getMentalMathGuideForProblem } from '../lib/mentalMath/guides';
+import { formatElapsedTimeAnswer } from '../lib/elapsedTime';
 
 interface ResultsProps {
   score: number;
@@ -81,6 +82,12 @@ export function Results({ score, total, problems, answers, onTryAgain, onBack, t
     return "Nice try! Practice makes perfect!";
   };
 
+  const formatAnswer = (problem: Problem) => (
+    problem.type === 'elapsedTime'
+      ? formatElapsedTimeAnswer(problem.answer)
+      : problem.answer.toString()
+  );
+
   return (
     <div className="results">
       <div className="header-bar">
@@ -130,12 +137,12 @@ export function Results({ score, total, problems, answers, onTryAgain, onBack, t
                     </div>
                     <div className="result-answer">
                       {isCorrect ? (
-                        <strong>{problem.answer}</strong>
+                        <strong>{formatAnswer(problem)}</strong>
                       ) : (
                         <>
                           <span className="wrong-answer">{answers[index] ?? '—'}</span>
                           {' → '}
-                          <strong>{problem.answer}</strong>
+                          <strong>{formatAnswer(problem)}</strong>
                         </>
                       )}
                     </div>

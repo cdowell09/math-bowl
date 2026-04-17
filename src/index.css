@@ -568,6 +568,80 @@ p {
   white-space: nowrap;
 }
 
+.elapsed-time-mode {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin: 0 auto 24px;
+  padding: 14px 18px;
+  width: fit-content;
+  max-width: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-muted);
+  box-shadow: var(--shadow-sm);
+}
+
+.elapsed-time-mode-label {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.elapsed-time-mode-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.elapsed-time-mode-button {
+  border: 1px solid var(--color-border-strong);
+  border-radius: 999px;
+  padding: 10px 16px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.elapsed-time-mode-button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.elapsed-time-mode-button--active {
+  background: var(--color-primary-soft);
+  color: var(--color-primary-strong);
+  border-color: var(--color-primary-strong);
+}
+
+.elapsed-time-answer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.elapsed-time-input-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.elapsed-time-input-group .answer-input {
+  width: 72px;
+}
+
+.elapsed-time-input-suffix {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: lowercase;
+}
+
 .answer-input {
   width: 84px;
   padding: 12px;
@@ -1310,6 +1384,17 @@ p {
     font-size: 1.2rem;
   }
 
+  .elapsed-time-mode {
+    flex-direction: column;
+    align-items: stretch;
+    width: min(100%, 420px);
+  }
+
+  .elapsed-time-mode-buttons {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
   .answer-input {
     width: 90px;
     font-size: 1.2rem;
@@ -1448,6 +1533,34 @@ p {
     text-align: center;
     padding: 6px 0;
     font-weight: 500;
+  }
+
+  .elapsed-time-mode {
+    padding: 14px;
+    margin-bottom: 20px;
+  }
+
+  .elapsed-time-mode-buttons {
+    flex-direction: column;
+  }
+
+  .elapsed-time-mode-button {
+    width: 100%;
+  }
+
+  .elapsed-time-answer {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .elapsed-time-input-group {
+    flex: 1 1 120px;
+    justify-content: center;
+  }
+
+  .elapsed-time-input-group .answer-input {
+    width: min(100%, 110px);
   }
 
   .problem-category {
