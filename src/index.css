@@ -1845,6 +1845,19 @@ p {
   box-shadow: var(--shadow-lg);
 }
 
+.settings-modal--scrollable {
+  display: flex;
+  flex-direction: column;
+  max-height: min(90vh, 880px);
+}
+
+.settings-modal-scroll {
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-right: 4px;
+}
+
 .settings-modal h2 {
   margin-bottom: 24px;
 }
@@ -2115,6 +2128,16 @@ p {
     border-radius: 20px;
   }
 
+  .modal-overlay {
+    align-items: flex-start;
+    overflow-y: auto;
+    padding: 16px;
+  }
+
+  .settings-modal--scrollable {
+    max-height: calc(100vh - 32px);
+  }
+
   .timer-mode-buttons {
     flex-direction: column;
   }
@@ -2203,6 +2226,13 @@ p {
 /* Print Worksheet Modal */
 .print-worksheet-modal {
   max-width: 500px;
+}
+
+.print-worksheet-modal .modal-buttons {
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(148, 163, 184, 0.2);
+  background: var(--color-surface);
 }
 
 .print-worksheet-modal h2 {
