@@ -1,9 +1,9 @@
 import type { MentalMathGuide } from '../../types/mentalMath';
-import { grade1MentalMathGuides } from './grade1';
-import { grade2MentalMathGuides } from './grade2';
-import { grade3MentalMathGuides } from './grade3';
-import { grade4MentalMathGuides } from './grade4';
-import { grade5MentalMathGuides } from './grade5';
+import { grade1MentalMathGuides } from './grade1.js';
+import { grade2MentalMathGuides } from './grade2.js';
+import { grade3MentalMathGuides } from './grade3.js';
+import { grade4MentalMathGuides } from './grade4.js';
+import { grade5MentalMathGuides } from './grade5.js';
 
 export const mentalMathGuides: MentalMathGuide[] = [
   ...grade1MentalMathGuides,

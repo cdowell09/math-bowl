@@ -1,4 +1,4 @@
-import { mentalMathGuides } from '../../data/mentalMathMoves';
+import { mentalMathGuides } from '../../data/mentalMathMoves/index.js';
 import type { MentalMathGuide } from '../../types/mentalMath';
 
 function normalizeKey(value: string): string {

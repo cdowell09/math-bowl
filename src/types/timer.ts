@@ -23,6 +23,7 @@ export interface TimerState {
 export interface TimedQuizResults {
   totalTime: number;
   timePerProblem: number[];
+  timePerProblemMs?: number[];
   averagePace: number;
   timedOutProblems: number[];
 }

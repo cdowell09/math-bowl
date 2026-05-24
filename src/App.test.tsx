@@ -1,6 +1,7 @@
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
 import App from './App';
 
 vi.mock('@vercel/analytics/react', () => ({
@@ -77,5 +78,14 @@ describe('App mental math routes', () => {
 
     expect(await screen.findByText(/nice try! practice makes perfect!/i)).toBeInTheDocument();
     expect(scrollTo).toHaveBeenCalledWith(0, 0);
+  });
+
+  it('treats the removed dashboard route as the grade picker', async () => {
+    window.history.replaceState(null, '', '/dashboard');
+
+    render(<App />);
+
+    expect(await screen.findByRole('heading', { name: /math bowl practice/i })).toBeInTheDocument();
+    expect(window.location.pathname).toBe('/');
   });
 });

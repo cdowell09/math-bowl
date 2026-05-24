@@ -43,7 +43,7 @@ export function PrintWorksheetModal({
           {!worksheet ? (
             <>
               <div className="timer-mode-section">
-                <p className="settings-label">Number of Problems</p>
+                <p className="settings-label">Problems to print</p>
                 <div className="timer-mode-buttons">
                   {PROBLEM_COUNT_OPTIONS.map((count) => (
                     <button
@@ -77,10 +77,10 @@ export function PrintWorksheetModal({
         {!worksheet ? (
           <div className="modal-buttons">
             <button className="modal-button cancel" onClick={onClose} type="button">
-              Cancel
+              Close
             </button>
             <button className="modal-button save" onClick={handleGenerate} type="button">
-              Generate
+              Preview worksheet
             </button>
           </div>
         ) : (
@@ -89,7 +89,7 @@ export function PrintWorksheetModal({
               ← Back
             </button>
             <button className="modal-button save" onClick={onPrint} type="button">
-              Print
+              Print worksheet
             </button>
           </div>
         )}

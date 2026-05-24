@@ -7,14 +7,14 @@
 :root {
   color-scheme: light;
   --color-bg-start: #f5f7ff;
-  --color-bg-mid: #ffffff;
+  --color-bg-mid: oklch(100% 0 0);
   --color-bg-end: #e8f0ff;
-  --color-surface: #ffffff;
+  --color-surface: oklch(100% 0 0);
   --color-surface-muted: #f7f9fc;
   --color-app-surface: rgba(255, 255, 255, 0.98);
   --color-border: #e5e7eb;
   --color-text: #0f172a;
-  --color-text-muted: #64748b;
+  --color-text-muted: oklch(50% 0.035 250);
   --color-primary: #2563eb;
   --color-primary-strong: #1d4ed8;
   --color-primary-soft: rgba(37, 99, 235, 0.12);
@@ -69,7 +69,7 @@
   --color-danger-soft: rgba(248, 113, 113, 0.18);
   --color-danger-soft-border: rgba(248, 113, 113, 0.45);
   --color-toggle-track-off: #334155;
-  --color-divider: #475569;
+  --color-divider: oklch(45% 0.035 250);
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.5);
   --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
@@ -316,6 +316,31 @@ p {
   box-shadow: var(--shadow-md);
 }
 
+.skip-to-content {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  z-index: 100;
+  padding: 12px 16px;
+  background: var(--color-primary-strong);
+  color: white;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+}
+
+.skip-to-content:focus {
+  position: fixed;
+  left: 16px;
+  top: 16px;
+  width: auto;
+  height: auto;
+  overflow: visible;
+}
+
 /* Settings Button */
 .settings-button {
   position: absolute;
@@ -398,7 +423,7 @@ p {
 }
 
 .timer-display.critical {
-  background: linear-gradient(135deg, var(--color-danger) 0%, #b91c1c 100%);
+  background: linear-gradient(135deg, var(--color-danger) 0%, oklch(40% 0.16 28) 100%);
   animation: pulse 0.35s ease-in-out infinite;
 }
 
@@ -2200,7 +2225,7 @@ p {
 
 /* Print Worksheet Button (Results page) */
 .print-worksheet-button {
-  background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+  background: linear-gradient(135deg, oklch(55% 0.035 250) 0%, oklch(45% 0.035 250) 100%);
   border: none;
   border-radius: var(--radius-lg);
   padding: 14px 24px;
@@ -2533,12 +2558,12 @@ p {
     text-align: center;
     margin-bottom: 32px;
     padding-bottom: 16px;
-    border-bottom: 2px solid #333;
+    border-bottom: 2px solid oklch(30% 0.01 70);
   }
 
   .print-title {
     font-size: 24pt;
-    color: #000 !important;
+    color: oklch(16% 0.01 70) !important;
     margin-bottom: 16px;
     font-family: 'Comic Neue', 'Comic Sans MS', sans-serif;
   }
@@ -2546,7 +2571,7 @@ p {
   .print-name-line {
     font-size: 14pt;
     text-align: right;
-    color: #333;
+    color: oklch(30% 0.01 70);
   }
 
   /* Print Problems List */
@@ -2588,7 +2613,7 @@ p {
     min-width: 120px;
     height: 1.2em;
     border: none !important;
-    border-bottom: 1px solid #000 !important;
+    border-bottom: 1px solid oklch(16% 0.01 70) !important;
     margin-left: 24px;
     vertical-align: bottom;
   }
@@ -2625,7 +2650,7 @@ p {
 
   .print-answer-value {
     font-weight: bold;
-    color: #000;
+    color: oklch(16% 0.01 70);
   }
 }
 
@@ -2742,7 +2767,7 @@ p {
 .mental-math-topic-tab--active {
   background: var(--color-primary);
   border-color: var(--color-primary-strong);
-  color: #fff;
+  color: var(--color-on-primary);
 }
 
 .mental-math-guide-view {
@@ -3089,5 +3114,873 @@ p {
   .mental-math-library-start-topic {
     max-width: 16ch;
     font-size: 0.96em;
+  }
+}
+
+/* =================================
+   Practice Desk Redesign
+   ================================= */
+
+:root {
+  --color-bg-start: oklch(96% 0.018 82);
+  --color-bg-mid: oklch(98% 0.012 88);
+  --color-bg-end: oklch(93% 0.02 82);
+  --color-surface: oklch(99% 0.008 82);
+  --color-surface-muted: oklch(96% 0.012 82);
+  --color-app-surface: oklch(98% 0.012 82 / 0.98);
+  --color-border: oklch(84% 0.018 82);
+  --color-border-strong: oklch(67% 0.025 78);
+  --color-text: oklch(23% 0.026 58);
+  --color-text-muted: oklch(45% 0.022 64);
+  --color-primary: oklch(49% 0.17 28);
+  --color-primary-strong: oklch(38% 0.15 28);
+  --color-primary-soft: oklch(92% 0.038 30);
+  --color-primary-soft-border: oklch(78% 0.075 30);
+  --color-primary-soft-hover: oklch(88% 0.05 30);
+  --color-accent: oklch(57% 0.105 78);
+  --color-accent-strong: oklch(40% 0.085 78);
+  --color-accent-soft: oklch(92% 0.045 78);
+  --color-accent-soft-border: oklch(78% 0.075 78);
+  --color-success: oklch(43% 0.12 150);
+  --color-success-soft: oklch(92% 0.045 150);
+  --color-success-soft-border: oklch(74% 0.08 150);
+  --color-danger: oklch(48% 0.16 28);
+  --color-danger-soft: oklch(93% 0.045 28);
+  --color-danger-soft-border: oklch(76% 0.08 28);
+  --color-toggle-track-off: oklch(76% 0.025 75);
+  --color-divider: oklch(80% 0.018 82);
+  --color-on-primary: oklch(98% 0.012 82);
+  --color-grade-1: oklch(76% 0.11 76);
+  --color-grade-2: oklch(69% 0.105 142);
+  --color-grade-3: oklch(69% 0.09 205);
+  --color-grade-4: oklch(70% 0.09 285);
+  --color-grade-5: oklch(70% 0.105 345);
+  --font-ui: "Satoshi", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono", Menlo, Consolas, monospace;
+  --radius-xl: 18px;
+  --radius-lg: 12px;
+  --radius-md: 8px;
+  --shadow-sm: 0 1px 0 oklch(24% 0.02 58 / 0.08);
+  --shadow-md: 0 10px 24px oklch(24% 0.02 58 / 0.1);
+  --shadow-lg: 0 24px 60px oklch(24% 0.02 58 / 0.14);
+  --focus-ring-primary: 0 0 0 3px oklch(49% 0.17 28 / 0.22);
+  --focus-ring-accent: 0 0 0 3px oklch(57% 0.105 78 / 0.25);
+}
+
+:root[data-theme="dark"] {
+  --color-bg-start: oklch(18% 0.032 58);
+  --color-bg-mid: oklch(14% 0.028 58);
+  --color-bg-end: oklch(11% 0.026 58);
+  --color-surface: oklch(20% 0.026 58);
+  --color-surface-muted: oklch(24% 0.028 58);
+  --color-app-surface: oklch(18% 0.03 58 / 0.98);
+  --color-border: oklch(34% 0.025 58);
+  --color-border-strong: oklch(45% 0.03 58);
+  --color-text: oklch(90% 0.016 82);
+  --color-text-muted: oklch(70% 0.018 82);
+  --color-primary: oklch(64% 0.16 28);
+  --color-primary-strong: oklch(72% 0.14 30);
+  --color-primary-soft: oklch(31% 0.07 28);
+  --color-primary-soft-border: oklch(48% 0.11 28);
+  --color-primary-soft-hover: oklch(36% 0.085 28);
+  --color-accent: oklch(75% 0.105 78);
+  --color-accent-strong: oklch(82% 0.09 78);
+  --color-accent-soft: oklch(32% 0.06 78);
+  --color-accent-soft-border: oklch(50% 0.08 78);
+  --color-success: oklch(72% 0.12 150);
+  --color-success-soft: oklch(30% 0.06 150);
+  --color-success-soft-border: oklch(48% 0.08 150);
+  --color-danger: oklch(72% 0.14 28);
+  --color-danger-soft: oklch(31% 0.06 28);
+  --color-danger-soft-border: oklch(50% 0.09 28);
+  --color-toggle-track-off: oklch(40% 0.03 58);
+  --color-divider: oklch(38% 0.025 58);
+  --color-on-primary: oklch(16% 0.028 58);
+  --shadow-sm: 0 1px 0 oklch(6% 0.02 58 / 0.45);
+  --shadow-md: 0 12px 28px oklch(5% 0.02 58 / 0.38);
+  --shadow-lg: 0 24px 70px oklch(5% 0.02 58 / 0.5);
+}
+
+body {
+  font-family: var(--font-ui);
+  background:
+    linear-gradient(90deg, oklch(62% 0.026 72 / 0.13) 1px, transparent 1px) 0 0 / 36px 36px,
+    linear-gradient(0deg, oklch(62% 0.026 72 / 0.1) 1px, transparent 1px) 0 0 / 36px 36px,
+    radial-gradient(900px circle at 50% -10%, var(--color-bg-start), transparent 58%),
+    linear-gradient(180deg, var(--color-bg-mid), var(--color-bg-end));
+}
+
+:root[data-theme="dark"] body {
+  background:
+    linear-gradient(90deg, oklch(72% 0.02 82 / 0.06) 1px, transparent 1px) 0 0 / 36px 36px,
+    linear-gradient(0deg, oklch(72% 0.02 82 / 0.05) 1px, transparent 1px) 0 0 / 36px 36px,
+    radial-gradient(900px circle at 50% -10%, oklch(26% 0.06 28), transparent 58%),
+    linear-gradient(180deg, var(--color-bg-mid), var(--color-bg-end));
+}
+
+.app {
+  max-width: 880px;
+  border-color: var(--color-border-strong);
+  border-radius: 22px;
+  box-shadow: var(--shadow-lg);
+}
+
+.app::before {
+  content: '';
+  position: absolute;
+  inset: 14px 14px auto;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-divider), transparent);
+  pointer-events: none;
+}
+
+.app-kicker,
+.dashboard-hero-kicker,
+.mental-math-tip-eyebrow,
+.result-mental-math-label {
+  color: var(--color-primary-strong);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+h3,
+.mental-math-move-title {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  letter-spacing: -0.018em;
+}
+
+h1 {
+  color: var(--color-text);
+  font-size: clamp(2.25rem, 5vw, 3.25rem);
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 14px;
+}
+
+h2 {
+  font-size: clamp(1.55rem, 3vw, 2.2rem);
+  line-height: 1.08;
+}
+
+p {
+  line-height: 1.55;
+}
+
+.header-bar {
+  align-items: stretch;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.header-bar-left,
+.header-bar-right {
+  display: flex;
+  align-items: center;
+  min-width: 48px;
+}
+
+.theme-toggle,
+.back-button,
+.settings-button {
+  border-color: var(--color-border-strong);
+  box-shadow: var(--shadow-sm);
+}
+
+.theme-toggle {
+  border-radius: var(--radius-md);
+}
+
+.back-button {
+  color: var(--color-text);
+  min-height: 44px;
+  margin-bottom: 0;
+}
+
+.grade-selector,
+.problem-type-selector,
+.quiz,
+.results {
+  text-align: center;
+}
+
+.grade-grid {
+  align-items: stretch;
+  grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.grade-card {
+  position: relative;
+  min-height: 108px;
+  overflow: hidden;
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--shadow-sm);
+}
+
+.grade-card::after {
+  content: '';
+  position: absolute;
+  inset: auto 14px 12px 14px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--grade-color, var(--color-primary));
+}
+
+.grade-card:nth-child(1) { --grade-color: var(--color-grade-1); }
+.grade-card:nth-child(2) { --grade-color: var(--color-grade-2); }
+.grade-card:nth-child(3) { --grade-color: var(--color-grade-3); }
+.grade-card:nth-child(4) { --grade-color: var(--color-grade-4); }
+.grade-card:nth-child(5) { --grade-color: var(--color-grade-5); }
+
+.grade-card:hover,
+.problem-type-card:hover,
+.surprise-me-button:hover,
+.try-again-button:hover,
+.submit-button:hover:not(:disabled),
+.print-worksheet-button:hover,
+.generate-worksheet-button:hover {
+  box-shadow: var(--shadow-md);
+  filter: none;
+  transform: translateY(-1px);
+}
+
+.practice-tools {
+  display: flex;
+  justify-content: center;
+  margin: 0 0 16px;
+}
+
+.study-guides-button {
+  background: var(--color-accent-soft);
+  border-color: var(--color-accent-soft-border);
+  box-shadow: var(--shadow-sm);
+  color: var(--color-text);
+  margin-bottom: 0;
+}
+
+.surprise-me-wrapper {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  margin: 18px 0;
+}
+
+.surprise-me-button,
+.problem-type-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  color: var(--color-text);
+  box-shadow: var(--shadow-sm);
+}
+
+.surprise-me-button {
+  margin-bottom: 0;
+  min-height: 64px;
+  padding: 16px 18px;
+  text-align: left;
+}
+
+.problem-type-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1fr;
+  margin-top: 10px;
+}
+
+.problem-type-card-wrapper {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.problem-type-card {
+  min-height: 78px;
+  padding: 16px 18px;
+  padding-right: 18px;
+}
+
+.problem-type-name {
+  color: var(--color-text);
+  font-size: 1.12rem;
+  line-height: 1.2;
+}
+
+.problem-type-desc {
+  color: var(--color-text-muted);
+  opacity: 1;
+}
+
+.card-print-button {
+  position: static;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: auto;
+  min-width: 78px;
+  height: auto;
+  min-height: 100%;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  box-shadow: var(--shadow-sm);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 0 13px;
+  transition: color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.card-print-button:hover {
+  color: var(--color-primary-strong);
+  border-color: var(--color-primary-soft-border);
+}
+
+.card-print-button svg {
+  flex: 0 0 auto;
+}
+
+.timer-toggle {
+  border-color: var(--color-border-strong);
+  background: var(--color-surface-muted);
+  box-shadow: none;
+}
+
+.timer-toggle--active {
+  background: var(--color-primary-soft);
+  border-color: var(--color-primary-soft-border);
+}
+
+.timer-toggle-switch--on .timer-toggle-switch-track,
+.timer-display,
+.submit-button,
+.try-again-button,
+.print-worksheet-button--primary,
+.tutor-composer-button,
+.modal-button.save,
+.generate-worksheet-button,
+.worksheet-actions .print-button,
+.mode-button.active,
+.count-option.active,
+.mental-math-topic-tab--active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.submit-button,
+.try-again-button,
+.print-worksheet-button,
+.modal-button,
+.generate-worksheet-button,
+.worksheet-actions .print-button {
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.quiz .header-bar {
+  background: transparent;
+  border-bottom-color: var(--color-divider);
+}
+
+.quiz-instructions {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 62ch;
+}
+
+.problems-list,
+.results-list {
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.problem-row,
+.result-row {
+  border-bottom: 1px solid var(--color-border);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.problem-row:last-child,
+.result-row:last-child {
+  border-bottom: 0;
+}
+
+.problem-number {
+  color: var(--color-primary-strong);
+  font-variant-numeric: tabular-nums;
+}
+
+.problem-display,
+.answer-input {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+
+.answer-input {
+  border-color: var(--color-border-strong);
+  box-shadow: inset 0 1px 0 oklch(24% 0.02 58 / 0.04);
+}
+
+.answer-input:focus {
+  border-color: var(--color-primary);
+}
+
+.elapsed-time-mode,
+.mental-math-tip-card,
+.timed-results {
+  background: var(--color-surface-muted);
+  border-color: var(--color-border-strong);
+  box-shadow: var(--shadow-sm);
+}
+
+.elapsed-time-mode-button--active {
+  background: var(--color-primary-soft);
+  border-color: var(--color-primary);
+  color: var(--color-primary-strong);
+}
+
+.score-display {
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.score-number,
+.score-percent {
+  color: var(--color-primary-strong);
+}
+
+.result-row.correct {
+  background: var(--color-success-soft);
+}
+
+.result-row.incorrect {
+  background: var(--color-danger-soft);
+}
+
+.result-icon.correct,
+.result-icon.incorrect {
+  color: currentColor;
+}
+
+.result-icon.correct {
+  color: var(--color-success);
+}
+
+.result-icon.incorrect,
+.wrong-answer {
+  color: var(--color-danger);
+}
+
+.problem-tutor-button {
+  background: var(--color-primary-soft);
+  border-color: var(--color-primary-soft-border);
+}
+
+.tutor-panel,
+.settings-modal,
+.worksheet-preview,
+.print-worksheet-modal {
+  border-color: var(--color-border-strong);
+  background: var(--color-surface);
+}
+
+.modal-overlay {
+  background: oklch(18% 0.03 58 / 0.42);
+}
+
+.print-worksheet-modal h2 {
+  color: var(--color-text);
+}
+
+.worksheet-subtitle {
+  color: var(--color-text-muted);
+}
+
+.worksheet-preview {
+  background:
+    linear-gradient(90deg, oklch(70% 0.02 82 / 0.14) 1px, transparent 1px) 0 0 / 28px 28px,
+    linear-gradient(0deg, oklch(70% 0.02 82 / 0.1) 1px, transparent 1px) 0 0 / 28px 28px,
+    var(--color-surface);
+  border-style: solid;
+}
+
+.worksheet-preview-header h3 {
+  color: var(--color-text);
+}
+
+.preview-problem {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.preview-answer-key-indicator,
+.worksheet-preview-tip {
+  background: var(--color-accent-soft);
+  border-color: var(--color-accent-soft-border);
+}
+
+.mental-math-topic-tab,
+.mental-math-section,
+.mental-math-move-card,
+.result-mental-math-tip,
+.tutor-message,
+.tutor-composer-input {
+  border-color: var(--color-border-strong);
+}
+
+.mental-math-tip-card {
+  background: var(--color-surface-muted);
+  border-color: var(--color-border-strong);
+}
+
+@media (min-width: 1024px) {
+  .app {
+    max-width: 980px;
+    padding: 44px;
+  }
+
+  .app.app--results {
+    max-width: min(1380px, calc(100vw - 48px));
+  }
+
+  .grade-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .grade-grid > .grade-card,
+  .grade-grid > .grade-card:nth-last-child(2):nth-child(4),
+  .grade-grid > .grade-card:last-child:nth-child(5) {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .header-bar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .header-bar-left:empty,
+  .header-bar-left[aria-hidden="true"] {
+    display: none;
+  }
+
+  .header-bar-center {
+    justify-content: stretch;
+  }
+
+  .surprise-me-wrapper,
+  .problem-type-card-wrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .card-print-button {
+    min-height: 48px;
+    width: 100%;
+  }
+}
+
+/* =================================
+   Practice Desk Shell
+   ================================= */
+
+.shell {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  max-width: 1180px;
+  min-height: min(640px, calc(100vh - 40px));
+  margin: 0 auto;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: 22px;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+.shell .app {
+  flex: 1;
+  min-width: 0;
+  max-width: none;
+  margin: 0;
+  padding: 32px 36px 40px;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.shell .app::before {
+  content: none;
+}
+
+.shell .app.app--results {
+  max-width: none;
+}
+
+/* Left rail */
+.app-rail {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 244px;
+  width: 244px;
+  padding: 26px 18px 22px;
+  background:
+    linear-gradient(180deg, var(--color-surface-muted), var(--color-bg-end));
+  border-right: 1px solid var(--color-border);
+}
+
+.app-rail-brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0 8px 4px;
+  margin-bottom: 26px;
+}
+
+.app-rail-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  border-radius: 12px;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.app-rail-wordmark {
+  display: flex;
+  flex-direction: column;
+  font-weight: 800;
+  font-size: 1.02rem;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+}
+
+.app-rail-wordmark-lead {
+  color: var(--color-primary-strong);
+}
+
+.app-rail-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.app-rail-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-lg);
+  background: transparent;
+  color: var(--color-text-muted);
+  font: inherit;
+  font-size: 0.96rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.app-rail-link svg {
+  flex: 0 0 auto;
+}
+
+.app-rail-link:hover:not(:disabled):not(.app-rail-link--active) {
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.app-rail-link--active {
+  background: var(--color-primary-soft);
+  border-color: var(--color-primary-soft-border);
+  color: var(--color-primary-strong);
+  font-weight: 700;
+}
+
+.app-rail-link:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.app-rail-link:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring-primary);
+}
+
+.app-rail-foot {
+  margin-top: auto;
+  padding: 14px 14px 2px;
+  text-align: left;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--color-text-muted);
+  border-top: 1px solid var(--color-border);
+}
+
+@media (max-width: 860px) {
+  .shell {
+    flex-direction: column;
+    max-width: 720px;
+  }
+
+  .app-rail {
+    flex: 0 0 auto;
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border-right: 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .app-rail-brand {
+    margin-bottom: 0;
+    padding: 0;
+  }
+
+  .app-rail-nav {
+    flex-direction: row;
+    gap: 6px;
+    margin-left: auto;
+  }
+
+  .app-rail-link span {
+    display: none;
+  }
+
+  .app-rail-link {
+    padding: 9px 11px;
+  }
+
+  .app-rail-foot {
+    display: none;
+  }
+
+  .shell .app {
+    padding: 24px 20px 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-rail-wordmark {
+    display: none;
+  }
+}
+
+/* Quiz: two-column worksheet grid (Practice Desk) */
+.quiz .problems-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(5, auto);
+  gap: 0;
+  margin-bottom: 28px;
+}
+
+.quiz .problem-row {
+  align-items: center;
+  padding: 13px 18px;
+  font-size: 1.18rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.quiz .problem-row:nth-child(-n+5) {
+  border-right: 1px solid var(--color-border);
+}
+
+.quiz .problem-row:nth-child(5n) {
+  border-bottom: 0;
+}
+
+.quiz .answer-input {
+  width: 92px;
+}
+
+/* Surprise Me: stack category chip above the expression so it keeps full width */
+.quiz .problem-row:has(.problem-category) {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-rows: auto auto;
+  column-gap: 12px;
+  row-gap: 5px;
+  align-items: center;
+}
+
+.quiz .problem-row:has(.problem-category) .problem-number {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+}
+
+.quiz .problem-row:has(.problem-category) .problem-category {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: start;
+}
+
+.quiz .problem-row:has(.problem-category) .problem-display {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.quiz .problem-row:has(.problem-category) .answer-input {
+  grid-column: 3;
+  grid-row: 1 / span 2;
+}
+
+@media (max-width: 720px) {
+  .quiz .problems-list {
+    grid-template-columns: 1fr;
+    grid-auto-flow: row;
+    grid-template-rows: none;
+  }
+
+  .quiz .problem-row:nth-child(-n+5) {
+    border-right: 0;
+  }
+
+  .quiz .problem-row:nth-child(5n) {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .quiz .problem-row:last-child {
+    border-bottom: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
   }
 }

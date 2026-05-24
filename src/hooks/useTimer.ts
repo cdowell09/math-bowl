@@ -103,6 +103,7 @@ export function useTimer({
     return {
       totalTime,
       timePerProblem: state.problemDurations,
+      timePerProblemMs: state.problemDurations.map((duration) => Math.round(duration * 1000)),
       averagePace,
       timedOutProblems,
     };

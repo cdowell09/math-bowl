@@ -21,6 +21,7 @@ Open http://localhost:5173
 - **Celebration animation** for perfect scores
 - **Responsive design** for all screen sizes
 - **Deep links** like `/grade1` open a grade directly
+- **Printable worksheets** from practice selection or results
 - **Optional tutor panel** on the results screen for missed problems
 
 ### Grade 1

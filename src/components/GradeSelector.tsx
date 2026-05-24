@@ -18,7 +18,7 @@ export function GradeSelector({ grades, onSelect, timerConfig, onTimerToggle, on
   return (
     <div className="grade-selector">
       <div className="header-bar">
-        <div className="header-bar-left" />
+        <div className="header-bar-left" aria-hidden="true" />
         <div className="header-bar-center">
           <TimerToggle
             config={timerConfig}
@@ -31,8 +31,9 @@ export function GradeSelector({ grades, onSelect, timerConfig, onTimerToggle, on
         </div>
       </div>
 
+      <p className="app-kicker">Mental Math Bowl Prep</p>
       <h1>Math Bowl Practice</h1>
-      <p>Choose your grade:</p>
+      <p>Pick a grade and start a focused practice round.</p>
 
       <div className="grade-grid">
         {grades.map((grade) => (

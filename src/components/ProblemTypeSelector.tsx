@@ -88,11 +88,13 @@ export function ProblemTypeSelector({ grade, onSelect, onBack, onPrintWorksheet,
       </div>
 
       <h2>{grade.name}</h2>
-      <p>Choose what to practice:</p>
+      <p>Choose a drill or print a worksheet:</p>
 
-      <button className="study-guides-button" onClick={() => onOpenMentalMathLibrary()} type="button">
-        Study Winning Tricks
-      </button>
+      <div className="practice-tools">
+        <button className="study-guides-button" onClick={() => onOpenMentalMathLibrary()} type="button">
+          Study Winning Tricks
+        </button>
+      </div>
 
       <div className="surprise-me-wrapper">
         <button className="surprise-me-button" onClick={handleSurpriseMe} type="button">
@@ -105,6 +107,7 @@ export function ProblemTypeSelector({ grade, onSelect, onBack, onPrintWorksheet,
           aria-label="Print Surprise Me worksheet"
         >
           <PrintIcon />
+          <span>Print</span>
         </button>
       </div>
 
@@ -126,6 +129,7 @@ export function ProblemTypeSelector({ grade, onSelect, onBack, onPrintWorksheet,
               aria-label={`Print ${pt.name} worksheet`}
             >
               <PrintIcon />
+              <span>Print</span>
             </button>
           </div>
         ))}

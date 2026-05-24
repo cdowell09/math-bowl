@@ -8,6 +8,7 @@ import { grade2 } from './data/grades/grade2';
 import { grade3 } from './data/grades/grade3';
 import { grade4 } from './data/grades/grade4';
 import { grade5 } from './data/grades/grade5';
+import { AppRail } from './components/AppRail';
 import { GradeSelector } from './components/GradeSelector';
 import { ProblemTypeSelector } from './components/ProblemTypeSelector';
 import { Quiz } from './components/Quiz';
@@ -204,7 +205,7 @@ function App() {
     const onPopState = () => applyPathToState(window.location.pathname, false);
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
-  }, []);
+  }, [gradeByNumber]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -273,8 +274,36 @@ function App() {
     handleProblemTypeSelect(problemType);
   };
 
+  const railActive = screen === 'results' ? 'results' : 'practice';
+  const resultsAvailable = quizResults !== null;
+
+  const handleRailResults = () => {
+    if (quizResults && selectedGrade && selectedProblemType) {
+      setScreen('results');
+    }
+  };
+
+  const handleRailWorksheets = () => {
+    const worksheetGrade = selectedGrade ?? grades[0];
+    const worksheetType =
+      selectedProblemType ?? selectedMentalMathProblemType ?? worksheetGrade.problemTypes[0];
+    handleOpenWorksheetModal({
+      source: 'problemTypeSelector',
+      grade: worksheetGrade,
+      problemType: worksheetType,
+    });
+  };
+
   return (
   <>
+    <div className="shell">
+    <AppRail
+      active={railActive}
+      resultsAvailable={resultsAvailable}
+      onPractice={handleBackToGrades}
+      onResults={handleRailResults}
+      onWorksheets={handleRailWorksheets}
+    />
     <div className={`app${screen === 'results' ? ' app--results' : ''}`}>
       {screen === 'grades' && (
         <GradeSelector
@@ -364,6 +393,7 @@ function App() {
         onPrint={print}
         onReset={resetWorksheet}
       />
+    </div>
     </div>
 
     <WorksheetPrintView worksheet={worksheet} />
