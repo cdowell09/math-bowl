@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-05-23T00:00:00Z",
+  "title": "Design System: Mental Math Bowl Practice",
+  "extensions": {
+    "colorMeta": {
+      "competition-red": {
+        "role": "primary",
+        "displayName": "Competition Red",
+        "canonical": "oklch(49% 0.17 28)",
+        "tonalRamp": ["oklch(20% 0.08 28)", "oklch(30% 0.12 28)", "oklch(38% 0.15 28)", "oklch(49% 0.17 28)", "oklch(60% 0.16 28)", "oklch(72% 0.12 28)", "oklch(85% 0.07 28)", "oklch(94% 0.03 28)"]
+      },
+      "pencil-gold": {
+        "role": "secondary",
+        "displayName": "Pencil Gold",
+        "canonical": "oklch(57% 0.105 78)",
+        "tonalRamp": ["oklch(25% 0.05 78)", "oklch(35% 0.07 78)", "oklch(45% 0.09 78)", "oklch(57% 0.105 78)", "oklch(68% 0.1 78)", "oklch(78% 0.085 78)", "oklch(88% 0.05 78)", "oklch(95% 0.025 78)"]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "oklch(99% 0.008 82)",
+        "tonalRamp": ["oklch(23% 0.026 58)", "oklch(35% 0.024 64)", "oklch(45% 0.022 64)", "oklch(67% 0.025 78)", "oklch(84% 0.018 82)", "oklch(93% 0.02 82)", "oklch(96% 0.012 82)", "oklch(99% 0.008 82)"]
+      },
+      "grade-1-gold": { "role": "tertiary", "displayName": "Grade 1 Gold", "canonical": "oklch(76% 0.11 76)", "tonalRamp": ["oklch(30% 0.06 76)", "oklch(42% 0.08 76)", "oklch(54% 0.1 76)", "oklch(66% 0.11 76)", "oklch(76% 0.11 76)", "oklch(84% 0.09 76)", "oklch(91% 0.05 76)", "oklch(96% 0.025 76)"] },
+      "grade-2-green": { "role": "tertiary", "displayName": "Grade 2 Green", "canonical": "oklch(69% 0.105 142)", "tonalRamp": ["oklch(28% 0.06 142)", "oklch(40% 0.08 142)", "oklch(52% 0.1 142)", "oklch(69% 0.105 142)", "oklch(78% 0.1 142)", "oklch(86% 0.08 142)", "oklch(92% 0.05 142)", "oklch(96% 0.025 142)"] },
+      "grade-3-blue": { "role": "tertiary", "displayName": "Grade 3 Blue", "canonical": "oklch(69% 0.09 205)", "tonalRamp": ["oklch(28% 0.05 205)", "oklch(40% 0.07 205)", "oklch(52% 0.085 205)", "oklch(69% 0.09 205)", "oklch(78% 0.085 205)", "oklch(86% 0.065 205)", "oklch(92% 0.04 205)", "oklch(96% 0.02 205)"] },
+      "grade-4-purple": { "role": "tertiary", "displayName": "Grade 4 Purple", "canonical": "oklch(70% 0.09 285)", "tonalRamp": ["oklch(30% 0.06 285)", "oklch(42% 0.075 285)", "oklch(54% 0.085 285)", "oklch(70% 0.09 285)", "oklch(79% 0.085 285)", "oklch(87% 0.065 285)", "oklch(92% 0.04 285)", "oklch(96% 0.02 285)"] },
+      "grade-5-magenta": { "role": "tertiary", "displayName": "Grade 5 Magenta", "canonical": "oklch(70% 0.105 345)", "tonalRamp": ["oklch(30% 0.06 345)", "oklch(42% 0.08 345)", "oklch(54% 0.095 345)", "oklch(70% 0.105 345)", "oklch(79% 0.1 345)", "oklch(87% 0.07 345)", "oklch(92% 0.045 345)", "oklch(96% 0.025 345)"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "The single page hero, e.g. 'Math Bowl Practice'." },
+      "headline": { "displayName": "Headline", "purpose": "Screen titles: grade name, problem-type name." },
+      "body": { "displayName": "Body", "purpose": "Instructions and descriptions; measure capped at 62ch." },
+      "label": { "displayName": "Label / Eyebrow", "purpose": "Uppercase kickers, tip eyebrow, rail micro-labels." },
+      "math": { "displayName": "Math", "purpose": "Problem expressions, answer inputs, worksheet numbers, score figures. JetBrains Mono, tabular-nums." }
+    },
+    "shadows": [
+      { "name": "hairline", "value": "0 1px 0 oklch(24% 0.02 58 / 0.08)", "purpose": "Resting whisper under cards, inputs, buttons." },
+      { "name": "hover", "value": "0 10px 24px oklch(24% 0.02 58 / 0.1)", "purpose": "Appears only on hover, paired with a 1px lift." },
+      { "name": "window", "value": "0 24px 60px oklch(24% 0.02 58 / 0.14)", "purpose": "Reserved for the single app shell frame." }
+    ],
+    "motion": [
+      { "name": "state", "value": "0.15s ease", "purpose": "Default duration/easing for hover and color state changes." },
+      { "name": "hover-lift", "value": "translateY(-1px)", "purpose": "The only positional move; surfaces lift 1px on hover." }
+    ],
+    "breakpoints": [
+      { "name": "rail-collapse", "value": "860px" },
+      { "name": "quiz-single-column", "value": "720px" },
+      { "name": "wordmark-hide", "value": "480px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button (commit)",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The commit action: Check My Answers / Submit Early. Heaviest red on any screen.",
+      "html": "<button class=\"ds-btn-primary\">Check My Answers!</button>",
+      "css": ".ds-btn-primary { font-family: Satoshi, ui-sans-serif, system-ui, sans-serif; font-weight: 700; font-size: 1.05rem; color: oklch(98% 0.012 82); background: oklch(49% 0.17 28); border: none; border-radius: 8px; padding: 18px 28px; box-shadow: 0 1px 0 oklch(24% 0.02 58 / 0.08); cursor: pointer; transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease; } .ds-btn-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 24px oklch(24% 0.02 58 / 0.1); } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 3px oklch(49% 0.17 28 / 0.22); }"
+    },
+    {
+      "name": "Ghost Button (Print)",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Quiet utility action; a column of these must not read as a wall of red.",
+      "html": "<button class=\"ds-btn-ghost\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"6 9 6 2 18 2 18 9\"/><path d=\"M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2\"/><rect x=\"6\" y=\"14\" width=\"12\" height=\"8\"/></svg><span>Print</span></button>",
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; gap: 7px; font-family: Satoshi, ui-sans-serif, system-ui, sans-serif; font-weight: 700; font-size: 0.88rem; color: oklch(45% 0.022 64); background: oklch(99% 0.008 82); border: 1px solid oklch(67% 0.025 78); border-radius: 12px; padding: 10px 13px; box-shadow: 0 1px 0 oklch(24% 0.02 58 / 0.08); cursor: pointer; transition: color 0.15s ease, border-color 0.15s ease, transform 0.15s ease; } .ds-btn-ghost:hover { color: oklch(38% 0.15 28); border-color: oklch(78% 0.075 30); transform: translateY(-1px); }"
+    },
+    {
+      "name": "Answer Input",
+      "kind": "input",
+      "refersTo": "answer-input",
+      "description": "Single mental-math answer field; monospace and tabular so columns align.",
+      "html": "<input class=\"ds-input-answer\" type=\"text\" inputmode=\"numeric\" placeholder=\"?\" />",
+      "css": ".ds-input-answer { width: 92px; padding: 12px; text-align: center; font-family: 'JetBrains Mono', ui-monospace, SF Mono, monospace; font-size: 1.18rem; font-variant-numeric: tabular-nums; color: oklch(23% 0.026 58); background: oklch(99% 0.008 82); border: 2px solid oklch(67% 0.025 78); border-radius: 8px; box-shadow: inset 0 1px 0 oklch(24% 0.02 58 / 0.04); } .ds-input-answer:focus-visible { outline: none; border-color: oklch(49% 0.17 28); box-shadow: 0 0 0 3px oklch(49% 0.17 28 / 0.22); }"
+    },
+    {
+      "name": "Grade Card",
+      "kind": "card",
+      "refersTo": "grade-card",
+      "description": "Grade selector tile; identity carried by the colored underline bar (Grade 3 shown).",
+      "html": "<button class=\"ds-grade-card\">Grade 3<span class=\"ds-grade-bar\"></span></button>",
+      "css": ".ds-grade-card { position: relative; min-height: 108px; width: 160px; display: flex; align-items: flex-start; padding: 18px; font-family: Satoshi, ui-sans-serif, system-ui, sans-serif; font-weight: 700; font-size: 1.1rem; color: oklch(23% 0.026 58); background: oklch(99% 0.008 82); border: 1px solid oklch(67% 0.025 78); border-radius: 12px; box-shadow: 0 1px 0 oklch(24% 0.02 58 / 0.08); cursor: pointer; transition: transform 0.15s ease, box-shadow 0.15s ease; } .ds-grade-card:hover { transform: translateY(-1px); box-shadow: 0 10px 24px oklch(24% 0.02 58 / 0.1); } .ds-grade-bar { position: absolute; inset: auto 14px 12px 14px; height: 6px; border-radius: 999px; background: oklch(69% 0.09 205); }"
+    },
+    {
+      "name": "Rail Link (active)",
+      "kind": "nav",
+      "refersTo": "rail-link-active",
+      "description": "Left-rail nav item in its active state: soft-red pill, red-strong label.",
+      "html": "<button class=\"ds-rail-link\" aria-current=\"page\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"9\"/><circle cx=\"12\" cy=\"12\" r=\"4.5\"/><circle cx=\"12\" cy=\"12\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/></svg><span>Practice</span></button>",
+      "css": ".ds-rail-link { display: flex; align-items: center; gap: 12px; width: 200px; padding: 11px 14px; font-family: Satoshi, ui-sans-serif, system-ui, sans-serif; font-weight: 700; font-size: 0.96rem; text-align: left; color: oklch(38% 0.15 28); background: oklch(92% 0.038 30); border: 1px solid oklch(78% 0.075 30); border-radius: 12px; cursor: pointer; transition: background 0.15s ease, color 0.15s ease; }"
+    },
+    {
+      "name": "Category Chip",
+      "kind": "chip",
+      "refersTo": "rail-link-active",
+      "description": "Surprise Me problem-type tag; stacks above the expression, never inline.",
+      "html": "<span class=\"ds-chip\">Add &amp; Subtract</span>",
+      "css": ".ds-chip { display: inline-block; font-family: Satoshi, ui-sans-serif, system-ui, sans-serif; font-weight: 700; font-size: 0.65rem; letter-spacing: 0.02em; color: oklch(38% 0.15 28); background: oklch(92% 0.038 30); padding: 4px 10px; border-radius: 12px; white-space: nowrap; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Competition Desk",
+    "overview": "This is the surface of a quiet desk the morning of a meet: ruled paper warmed by lamp light, a pencil that writes in clean monospace, a small trophy in the corner, and red ink held back for the moments that actually count. The whole system is paper-first; content sits on warm off-white sheets over a faint graph-paper field, and competition red appears only on the active path. The personality is encouraging and focused, never babyish and never corporate, rejecting babyish classroom clip-art, sterile enterprise dashboards, flashy arcade treatment, and generic AI-tutor gloss. Light is the default because the scene is a desk under daytime or lamp light; a warm-tinted dark mode answers the evening room. Color carries meaning quietly: each grade owns one support hue, and correctness speaks in green and red plus icon and position, never color alone.",
+    "keyCharacteristics": [
+      "Paper-first: warm off-white sheets on a faint graph-paper field, framed in one elevated window with a left rail.",
+      "Red is rare and earned; it marks the active path and the act of committing, nothing decorative.",
+      "Two type voices only: Satoshi for everything human, JetBrains Mono for everything numeric.",
+      "Grade identity carried by a single support hue per level.",
+      "Calm, exam-ruled components: thin warm borders, generous internal air, motion limited to a 1px lift on hover."
+    ],
+    "rules": [
+      { "name": "The One-Round Rule", "body": "Competition red covers no more than roughly 10% of any screen. It belongs to the live path and the commit action. If two red elements compete on one screen, one is decoration and must be demoted to neutral or pencil gold.", "section": "colors" },
+      { "name": "The Grade-Hue Rule", "body": "The five grade colors are identity, not status. They appear only as the grade-card underline. Never recolor a button, score, or alert with a grade hue.", "section": "colors" },
+      { "name": "The Two-Voice Rule", "body": "Exactly two families ship. Words are Satoshi, numbers are JetBrains Mono. No third display face, no script, no Comic Sans lineage.", "section": "typography" },
+      { "name": "The Flat-Desk Rule", "body": "Surfaces are flat at rest. A shadow larger than the hairline is a response to state (hover, the app window), never a default decoration.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep Competition Red under ~10% of the screen; spend it on the live path and the commit button.",
+      "Do set every number, expression, input, and score in JetBrains Mono, and every word in Satoshi.",
+      "Do carry grade identity with the single underline hue per grade, and nowhere else.",
+      "Do frame surfaces with 1px Border Strong and tonal layering; reserve real shadow for hover and the app window.",
+      "Do pair every correct/incorrect signal with an icon and position, never color alone.",
+      "Do tint every neutral warm (hue 58 to 88); no cold gray, no pure black or white."
+    ],
+    "donts": [
+      "Don't reintroduce babyish classroom visuals or a Comic Sans / Comic Neue lineage font.",
+      "Don't drift toward a sterile enterprise dashboard, flashy arcade treatment, or generic AI-tutor gloss.",
+      "Don't build flat card grids where every tile has equal weight and decoration.",
+      "Don't use a border-left or border-right thicker than 1px as a colored accent stripe.",
+      "Don't add idle drop shadows, gradient text, or decorative glassmorphism.",
+      "Don't spend the grade hues or pencil gold on status meaning; status is green/red plus icon.",
+      "Don't add a third type family or stack red on red until the screen feels loud."
+    ]
+  }
+}
