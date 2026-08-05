@@ -1,0 +1,43 @@
+name: Public deployment smoke test
+
+on:
+  deployment_status:
+  schedule:
+    - cron: "17 15 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    if: >-
+      github.event_name != 'deployment_status' ||
+      (github.event.deployment_status.state == 'success' &&
+      github.event.deployment.environment == 'Production')
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        route:
+          - /
+          - /grade1/tricks/add-subtract
+
+    steps:
+      - name: Check ${{ matrix.route }}
+        env:
+          BASE_URL: https://math-bowl.vercel.app
+          ROUTE: ${{ matrix.route }}
+        run: |
+          response_file="$(mktemp)"
+          curl \
+            --fail \
+            --location \
+            --output "$response_file" \
+            --retry 5 \
+            --retry-all-errors \
+            --retry-delay 2 \
+            --show-error \
+            --silent \
+            "${BASE_URL}${ROUTE}"
+          grep --fixed-strings --quiet '<title>Math Bowl Practice</title>' "$response_file"
