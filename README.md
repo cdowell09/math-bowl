@@ -6,8 +6,10 @@ A kid-friendly web app for practicing mental math problems based on the Mental M
 
 ## Getting Started
 
+Use Node.js 24.
+
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
@@ -110,6 +112,7 @@ If Gemini times out or returns an invalid response, the backend falls back to a 
 For validation, run:
 
 ```bash
+npm ci
 npm test
 npm run build
 ```
