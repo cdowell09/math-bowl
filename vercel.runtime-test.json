@@ -1,0 +1,8 @@
+{
+  "builds": [
+    {
+      "src": "api/tutor.ts",
+      "use": "@vercel/node@5.9.5"
+    }
+  ]
+}

@@ -5,6 +5,8 @@ export default defineConfig({
   plugins: [react()],
   test: {
     environment: 'jsdom',
+    // Let jsdom provide Web Storage on Node.js 25 and later.
+    execArgv: ['--no-experimental-webstorage'],
     setupFiles: ['./src/test/setup.ts'],
     exclude: [...configDefaults.exclude, '**/.vercel/**', '**/.worktrees/**', '**/worktrees/**'],
   },
