@@ -33,95 +33,45 @@ export async function requestGeminiTutor(
     throw new Error('Missing Gemini API key');
   }
 
-  const fetchImpl = options.fetchImpl ?? fetch;
-  const timeoutMs = options.timeoutMs ?? getGeminiTimeoutMs();
-  const controller = new AbortController();
-  let timeoutId: ReturnType<typeof setTimeout> | undefined;
-  const timeoutToken = Symbol('gemini-timeout');
+  const signal = AbortSignal.timeout(options.timeoutMs ?? getGeminiTimeoutMs());
 
   try {
-    const result = await Promise.race([
-      fetchImpl(`${GEMINI_URL}/${getGeminiModel()}:generateContent`, {
+    const response = await (options.fetchImpl ?? fetch)(
+      `${GEMINI_URL}/${getGeminiModel()}:generateContent`,
+      {
         method: 'POST',
         headers: createGeminiHeaders(apiKey),
-        signal: controller.signal,
+        signal,
         body: JSON.stringify({
-          systemInstruction: {
-            parts: [{ text: prompt.system }],
-          },
-          contents: [
-            {
-              role: 'user',
-              parts: [{ text: prompt.user }],
-            },
-          ],
+          systemInstruction: { parts: [{ text: prompt.system }] },
+          contents: [{ role: 'user', parts: [{ text: prompt.user }] }],
           generationConfig: {
             temperature: 0.2,
-            thinkingConfig: {
-              thinkingLevel: DEFAULT_GEMINI_THINKING_LEVEL,
-            },
+            thinkingConfig: { thinkingLevel: DEFAULT_GEMINI_THINKING_LEVEL },
           },
         }),
-      }),
-      new Promise<Response | typeof timeoutToken>((resolve) => {
-        timeoutId = setTimeout(() => {
-          controller.abort();
-          resolve(timeoutToken);
-        }, timeoutMs);
-      }),
-    ]);
+      }
+    );
 
-    if (result === timeoutToken) {
-      throw new Error('Gemini request timed out');
-    }
-
-    const response = result;
-    if (!response.ok) {
-      throw new Error(`Gemini request failed with ${response.status}`);
-    }
+    if (!response.ok) throw new Error(`Gemini request failed with ${response.status}`);
 
     const data = (await response.json()) as {
-      candidates?: Array<{
-        content?: {
-          parts?: Array<{ text?: string }>;
-        };
-      }>;
+      candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
     };
-
     const content = data.candidates?.[0]?.content?.parts?.map((part) => part.text ?? '').join('').trim() ?? '';
-    if (!content) {
-      throw new Error('Gemini returned an empty response');
-    }
+    if (!content) throw new Error('Gemini returned an empty response');
 
     return normalizeTutorResponse(content);
   } catch (error) {
-    if (error instanceof Error && error.message === 'Gemini request timed out') {
-      throw error;
-    }
-    if (controller.signal.aborted) {
-      throw new Error('Gemini request timed out');
-    }
+    if (signal.aborted) throw new Error('Gemini request timed out');
     throw error;
-  } finally {
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-    }
   }
 }
 
 function normalizeTutorResponse(content: string): TutorResponse {
   return {
-    summary: content,
-    hint: null,
-    nextQuestion: null,
-    workedExample: null,
     mode: 'live',
     fallbackReason: null,
-    messages: [
-      {
-        role: 'assistant',
-        content,
-      },
-    ],
+    messages: [{ role: 'assistant', content }],
   };
 }

@@ -11,10 +11,6 @@ describe('requestTutor', () => {
     const fetchSpy = vi.fn(async () => {
       return new Response(
         JSON.stringify({
-          summary: 'Let us try the first step.',
-          hint: 'Count on from the larger number.',
-          nextQuestion: 'What is 9 plus 4?',
-          workedExample: '9 + 4 = 13',
           mode: 'fallback',
           fallbackReason: 'Gemini request failed with 429',
           messages: [{ role: 'assistant', content: 'Let us try the first step.' }],
@@ -49,10 +45,6 @@ describe('requestTutor', () => {
       })
     );
     expect(response).toEqual({
-      summary: 'Let us try the first step.',
-      hint: 'Count on from the larger number.',
-      nextQuestion: 'What is 9 plus 4?',
-      workedExample: '9 + 4 = 13',
       mode: 'fallback',
       fallbackReason: 'Gemini request failed with 429',
       messages: [{ role: 'assistant', content: 'Let us try the first step.' }],

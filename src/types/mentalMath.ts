@@ -7,8 +7,6 @@ export interface MentalMathMove {
   workedExample: string;
   speedTip: string;
   mistakeToAvoid: string;
-  coachNote: string;
-  tags: string[];
 }
 
 export interface MentalMathGamePlan {
@@ -26,6 +24,5 @@ export interface MentalMathGuide {
   coreMoves: MentalMathMove[];
   warmupChecklist: string[];
   commonTraps: string[];
-  confidenceNote: string;
   gamePlan: MentalMathGamePlan;
 }

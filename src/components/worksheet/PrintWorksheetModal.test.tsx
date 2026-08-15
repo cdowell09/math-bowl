@@ -40,12 +40,9 @@ function makeContext(): WorksheetModalContext {
 
 function makeWorksheet(): Worksheet {
   return {
-    id: 'worksheet-1',
     title: 'Grade 4 - Decimals',
     grade: 4,
-    gradeName: 'Grade 4',
     problemTypeId: 'decimals',
-    problemTypeName: 'Decimals',
     includeAnswerKey: true,
     problems: Array.from({ length: 10 }, (_, index) => ({
       id: `problem-${index + 1}`,

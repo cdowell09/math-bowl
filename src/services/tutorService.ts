@@ -24,22 +24,10 @@ function normalizeMessages(messages: unknown): TutorMessage[] {
 }
 
 function normalizeTutorResponse(data: unknown): TutorResponse {
-  if (!data || typeof data !== 'object') {
-    return {
-      summary: null,
-      hint: null,
-      nextQuestion: null,
-      workedExample: null,
-      messages: [],
-    };
-  }
+  if (!data || typeof data !== 'object') return { messages: [] };
 
   const record = data as Record<string, unknown>;
   return {
-    summary: typeof record.summary === 'string' ? record.summary : null,
-    hint: typeof record.hint === 'string' ? record.hint : null,
-    nextQuestion: typeof record.nextQuestion === 'string' ? record.nextQuestion : null,
-    workedExample: typeof record.workedExample === 'string' ? record.workedExample : null,
     mode: record.mode === 'fallback' ? 'fallback' : 'live',
     fallbackReason: typeof record.fallbackReason === 'string' ? record.fallbackReason : null,
     messages: normalizeMessages(record.messages),

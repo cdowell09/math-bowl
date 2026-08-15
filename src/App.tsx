@@ -128,9 +128,7 @@ function App() {
     resetWorksheet,
   } = useWorksheetModal();
 
-  const { print } = usePrint({
-    onAfterPrint: closeWorksheetModal,
-  });
+  usePrint({ onAfterPrint: closeWorksheetModal });
 
   const gradeByNumber = useMemo(() => {
     const map = new Map<number, GradeConfig>();
@@ -304,7 +302,7 @@ function App() {
       onResults={handleRailResults}
       onWorksheets={handleRailWorksheets}
     />
-    <div className={`app${screen === 'results' ? ' app--results' : ''}`}>
+    <div className="app">
       {screen === 'grades' && (
         <GradeSelector
           grades={grades}
@@ -390,7 +388,7 @@ function App() {
         worksheet={worksheet}
         onClose={closeWorksheetModal}
         onGenerate={generateWorksheet}
-        onPrint={print}
+        onPrint={() => window.print()}
         onReset={resetWorksheet}
       />
     </div>

@@ -7,53 +7,15 @@ interface UseProblemTutorOptions {
 }
 
 function getErrorMessage(error: unknown): string {
-  if (error instanceof Error && error.message.trim() !== '') {
-    return error.message;
-  }
-
-  return 'Tutor request failed';
+  return error instanceof Error && error.message.trim() ? error.message : 'Tutor request failed';
 }
 
-function buildTutorRequest(problem: TutorProblemContext, messages: TutorMessage[]): TutorRequest {
-  return {
-    ...problem,
-    messages,
-  };
-}
-
-function buildOptimisticResponse(
-  previous: TutorResponse | null,
-  userMessage: TutorMessage
-): TutorResponse | null {
-  if (!previous) {
-    return null;
-  }
-
-  return {
-    ...previous,
-    messages: [...previous.messages, userMessage],
-  };
-}
-
-function mergeTutorMessages(baseMessages: TutorMessage[], nextMessages: TutorMessage[]): TutorMessage[] {
-  if (nextMessages.length === 0) {
-    return baseMessages;
-  }
-
-  const hasBasePrefix = baseMessages.every((message, index) => {
-    const nextMessage = nextMessages[index];
-    return Boolean(
-      nextMessage &&
-        nextMessage.role === message.role &&
-        nextMessage.content === message.content
-    );
-  });
-
-  if (hasBasePrefix && nextMessages.length >= baseMessages.length) {
-    return nextMessages;
-  }
-
-  return [...baseMessages, ...nextMessages];
+function mergeTutorMessages(base: TutorMessage[], next: TutorMessage[]): TutorMessage[] {
+  const hasBasePrefix = base.every(
+    (message, index) =>
+      next[index]?.role === message.role && next[index]?.content === message.content
+  );
+  return hasBasePrefix && next.length >= base.length ? next : [...base, ...next];
 }
 
 export function useProblemTutor({ requestTutor = requestTutorApi }: UseProblemTutorOptions = {}) {
@@ -61,22 +23,14 @@ export function useProblemTutor({ requestTutor = requestTutorApi }: UseProblemTu
   const [isLoading, setIsLoading] = useState(false);
   const [activeProblem, setActiveProblem] = useState<TutorProblemContext | null>(null);
   const [response, setResponse] = useState<TutorResponse | null>(null);
-  const [messages, setMessages] = useState<TutorMessage[]>([]);
   const [error, setError] = useState<string | null>(null);
-
   const responseRef = useRef<TutorResponse | null>(null);
-  const messagesRef = useRef<TutorMessage[]>([]);
   const sessionIdRef = useRef(0);
   const requestIdRef = useRef(0);
 
-  const commitResponse = useCallback((nextResponse: TutorResponse | null) => {
-    responseRef.current = nextResponse;
-    setResponse(nextResponse);
-  }, []);
-
-  const commitMessages = useCallback((nextMessages: TutorMessage[]) => {
-    messagesRef.current = nextMessages;
-    setMessages(nextMessages);
+  const commitResponse = useCallback((next: TutorResponse | null) => {
+    responseRef.current = next;
+    setResponse(next);
   }, []);
 
   const closeTutor = useCallback(() => {
@@ -86,105 +40,73 @@ export function useProblemTutor({ requestTutor = requestTutorApi }: UseProblemTu
     setIsLoading(false);
     setActiveProblem(null);
     commitResponse(null);
-    commitMessages([]);
     setError(null);
-  }, [commitMessages, commitResponse]);
+  }, [commitResponse]);
 
-  const openTutor = useCallback(
-    async (problem: TutorProblemContext) => {
-      const sessionId = sessionIdRef.current + 1;
-      sessionIdRef.current = sessionId;
-      requestIdRef.current = 0;
+  const openTutor = useCallback(async (problem: TutorProblemContext) => {
+    const sessionId = ++sessionIdRef.current;
+    const requestId = requestIdRef.current = 1;
 
-      setActiveProblem(problem);
-      setIsOpen(true);
-      setIsLoading(true);
-      setError(null);
-      commitResponse(null);
-      commitMessages([]);
+    setActiveProblem(problem);
+    setIsOpen(true);
+    setIsLoading(true);
+    setError(null);
+    commitResponse(null);
 
-      const requestId = 1;
-      requestIdRef.current = requestId;
-
-      try {
-        const nextResponse = await requestTutor(buildTutorRequest(problem, []));
-        if (sessionIdRef.current !== sessionId || requestIdRef.current !== requestId) {
-          return;
-        }
-
-        commitResponse(nextResponse);
-        commitMessages(nextResponse.messages);
-      } catch (requestError) {
-        if (sessionIdRef.current !== sessionId || requestIdRef.current !== requestId) {
-          return;
-        }
-
+    try {
+      const next = await requestTutor({ ...problem, messages: [] });
+      if (sessionIdRef.current === sessionId && requestIdRef.current === requestId) {
+        commitResponse(next);
+      }
+    } catch (requestError) {
+      if (sessionIdRef.current === sessionId && requestIdRef.current === requestId) {
         setError(getErrorMessage(requestError));
-      } finally {
-        if (sessionIdRef.current === sessionId && requestIdRef.current === requestId) {
-          setIsLoading(false);
-        }
       }
-    },
-    [commitResponse, requestTutor]
-  );
-
-  const sendMessage = useCallback(
-    async (content: string) => {
-      const problem = activeProblem;
-      const currentResponse = responseRef.current;
-      const currentMessages = messagesRef.current;
-
-      if (!problem || !currentResponse) {
-        return;
+    } finally {
+      if (sessionIdRef.current === sessionId && requestIdRef.current === requestId) {
+        setIsLoading(false);
       }
+    }
+  }, [commitResponse, requestTutor]);
 
-      const userMessage: TutorMessage = { role: 'user', content };
-      const optimisticMessages = [...currentMessages, userMessage];
-      const optimisticResponse = buildOptimisticResponse(currentResponse, userMessage);
-      if (!optimisticResponse) {
-        return;
+  const sendMessage = useCallback(async (content: string) => {
+    const problem = activeProblem;
+    const current = responseRef.current;
+    if (!problem || !current) return;
+
+    const optimistic: TutorResponse = {
+      ...current,
+      messages: [...current.messages, { role: 'user', content }],
+    };
+    const sessionId = sessionIdRef.current;
+    const requestId = ++requestIdRef.current;
+
+    commitResponse(optimistic);
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const next = await requestTutor({ ...problem, messages: optimistic.messages });
+      if (sessionIdRef.current === sessionId && requestIdRef.current === requestId) {
+        commitResponse({
+          ...next,
+          messages: mergeTutorMessages(optimistic.messages, next.messages),
+        });
       }
-
-      const sessionId = sessionIdRef.current;
-      const requestId = requestIdRef.current + 1;
-      requestIdRef.current = requestId;
-
-      commitMessages(optimisticMessages);
-      commitResponse(optimisticResponse);
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const nextResponse = await requestTutor(buildTutorRequest(problem, optimisticMessages));
-        if (sessionIdRef.current !== sessionId || requestIdRef.current !== requestId) {
-          return;
-        }
-
-        commitResponse(nextResponse);
-        commitMessages(mergeTutorMessages(optimisticMessages, nextResponse.messages));
-      } catch (requestError) {
-        if (sessionIdRef.current !== sessionId || requestIdRef.current !== requestId) {
-          return;
-        }
-
+    } catch (requestError) {
+      if (sessionIdRef.current === sessionId && requestIdRef.current === requestId) {
         setError(getErrorMessage(requestError));
-      } finally {
-        if (sessionIdRef.current === sessionId && requestIdRef.current === requestId) {
-          setIsLoading(false);
-        }
       }
-    },
-    [activeProblem, commitResponse, requestTutor]
-  );
+    } finally {
+      if (sessionIdRef.current === sessionId && requestIdRef.current === requestId) {
+        setIsLoading(false);
+      }
+    }
+  }, [activeProblem, commitResponse, requestTutor]);
 
   const resetTutor = useCallback(() => {
-    if (!activeProblem) {
-      closeTutor();
-      return;
-    }
-
-    void openTutor(activeProblem);
+    if (activeProblem) void openTutor(activeProblem);
+    else closeTutor();
   }, [activeProblem, closeTutor, openTutor]);
 
   return {
@@ -192,7 +114,7 @@ export function useProblemTutor({ requestTutor = requestTutorApi }: UseProblemTu
     isLoading,
     activeProblem,
     response,
-    messages,
+    messages: response?.messages ?? [],
     error,
     openTutor,
     sendMessage,

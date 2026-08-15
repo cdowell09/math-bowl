@@ -40,6 +40,5 @@ describe('mental math guides', () => {
     expect(summary).toContain('Elapsed Time');
     expect(summary).toContain('Look for');
     expect(summary).toContain(guide?.coreMoves[0]?.title ?? '');
-    expect(summary).not.toContain(guide?.confidenceNote ?? '');
   });
 });

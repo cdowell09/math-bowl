@@ -9,12 +9,9 @@ export function generateWorksheet(config: WorksheetConfig): Worksheet {
   const problems = Array.from({ length: problemCount }, () => problemType.generate());
 
   return {
-    id: crypto.randomUUID(),
     title: `${grade.name} - ${problemType.name}`,
     grade: grade.grade,
-    gradeName: grade.name,
     problemTypeId: problemType.id,
-    problemTypeName: problemType.name,
     problems,
     includeAnswerKey,
   };
@@ -27,12 +24,9 @@ export function createWorksheetFromProblems(
   includeAnswerKey: boolean
 ): Worksheet {
   return {
-    id: crypto.randomUUID(),
     title: `${grade.name} - ${problemType.name}`,
     grade: grade.grade,
-    gradeName: grade.name,
     problemTypeId: problemType.id,
-    problemTypeName: problemType.name,
     problems: [...problems],
     includeAnswerKey,
   };

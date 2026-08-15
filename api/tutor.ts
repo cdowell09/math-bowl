@@ -21,42 +21,22 @@ export default async function handler(req: TutorApiRequest, res: TutorApiRespons
     return;
   }
 
+  let request;
   try {
-    const request = validateTutorRequest(req.body);
-    const prompt = buildTutorPrompt(request);
-    const response = await requestGeminiTutor(prompt);
-    res.status(200).json(response);
+    request = validateTutorRequest(req.body);
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Tutor request failed';
+    res.status(400).json({
+      error: error instanceof Error ? error.message : 'Invalid tutor request',
+    });
+    return;
+  }
 
-    if (message.startsWith('Invalid')) {
-      res.status(400).json({ error: message });
-      return;
-    }
-
-    try {
-      const request = validateTutorRequest(req.body);
-      const fallback = buildTutorFallback(request);
-      res.status(200).json({
-        ...fallback,
-        mode: 'fallback',
-        fallbackReason: message,
-      });
-    } catch {
-      res.status(200).json(
-        {
-          ...buildTutorFallback({
-          grade: 1,
-          problemType: 'Unknown',
-          problemDisplay: 'Unknown problem',
-          correctAnswer: 0,
-          studentAnswer: null,
-          messages: [],
-          }),
-          mode: 'fallback',
-          fallbackReason: message,
-        }
-      );
-    }
+  try {
+    res.status(200).json(await requestGeminiTutor(buildTutorPrompt(request)));
+  } catch (error) {
+    res.status(200).json({
+      ...buildTutorFallback(request),
+      fallbackReason: error instanceof Error ? error.message : 'Tutor request failed',
+    });
   }
 }

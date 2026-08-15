@@ -20,7 +20,6 @@ export function useTimer({
       : config.totalMinutes * 60,
     isRunning: false,
     currentProblemIndex: 0,
-    problemStartTimes: [], // Kept for potential future use
     problemDurations: Array(problemCount).fill(0),
   }));
 
@@ -45,38 +44,13 @@ export function useTimer({
     quizStartTimeRef.current = now;
     problemStartTimeRef.current = now;
 
-    setState(prev => ({
-      ...prev,
-      isRunning: true,
-      problemStartTimes: [now],
-    }));
+    setState(prev => ({ ...prev, isRunning: true }));
   }, []);
 
   const pauseTimer = useCallback(() => {
     clearTimer();
     setState(prev => ({ ...prev, isRunning: false }));
   }, [clearTimer]);
-
-  const advanceToProblem = useCallback((index: number) => {
-    const now = Date.now();
-    const duration = (now - problemStartTimeRef.current) / 1000;
-    problemStartTimeRef.current = now;
-
-    setState(prev => {
-      const newDurations = [...prev.problemDurations];
-      if (prev.currentProblemIndex < newDurations.length) {
-        newDurations[prev.currentProblemIndex] = duration;
-      }
-
-      return {
-        ...prev,
-        currentProblemIndex: index,
-        timeRemaining: config.mode === 'per-problem' ? config.secondsPerProblem : prev.timeRemaining,
-        problemStartTimes: [...prev.problemStartTimes, now],
-        problemDurations: newDurations,
-      };
-    });
-  }, [config.mode, config.secondsPerProblem]);
 
   const recordAnswer = useCallback((problemIndex: number) => {
     const now = Date.now();
@@ -100,13 +74,7 @@ export function useTimer({
       .map((d, i) => d === 0 ? i : -1)
       .filter(i => i !== -1);
 
-    return {
-      totalTime,
-      timePerProblem: state.problemDurations,
-      timePerProblemMs: state.problemDurations.map((duration) => Math.round(duration * 1000)),
-      averagePace,
-      timedOutProblems,
-    };
+    return { totalTime, averagePace, timedOutProblems };
   }, [state.problemDurations]);
 
   const formatTime = useCallback((seconds: number): string => {
@@ -172,7 +140,6 @@ export function useTimer({
     state,
     startTimer,
     pauseTimer,
-    advanceToProblem,
     recordAnswer,
     getResults,
     formatTime,

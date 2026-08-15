@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
-import type { TutorMessage, TutorProblemContext, TutorResponse } from '../types/tutor';
+import type { TutorProblemContext, TutorResponse } from '../types/tutor';
 import { TutorMarkdown } from './TutorMarkdown';
 
 type TutorTtsStatus = 'idle' | 'loading' | 'speaking';
@@ -17,7 +17,6 @@ interface TutorPanelProps {
   isOpen: boolean;
   activeProblem: TutorProblemContext | null;
   response: TutorResponse | null;
-  messages: TutorMessage[];
   isLoading: boolean;
   error: string | null;
   tts?: TutorTtsControls;
@@ -32,48 +31,10 @@ function formatAnswer(answer: number | null) {
   return answer === null ? '—' : answer.toString();
 }
 
-function composeResponseContent(response: TutorResponse | null): string {
-  if (!response) {
-    return '';
-  }
-
-  const content = [response.summary, response.hint ? `Hint: ${response.hint}` : null, response.nextQuestion, response.workedExample]
-    .filter((value): value is string => Boolean(value && value.trim() !== ''))
-    .join('\n\n')
-    .trim();
-
-  return content;
-}
-
-function buildFallbackMessage(response: TutorResponse | null): TutorMessage[] {
-  const content = composeResponseContent(response);
-  return content ? [{ role: 'assistant', content }] : [];
-}
-
-function getVisibleMessages(messages: TutorMessage[], response: TutorResponse | null): TutorMessage[] {
-  const composedResponse = composeResponseContent(response);
-
-  if (messages.length > 0) {
-    if (
-      composedResponse &&
-      messages[0]?.role === 'assistant' &&
-      response?.summary?.trim() &&
-      messages[0].content.trim() === response.summary.trim()
-    ) {
-      return [{ ...messages[0], content: composedResponse }, ...messages.slice(1)];
-    }
-
-    return messages;
-  }
-
-  return buildFallbackMessage(response);
-}
-
 export function TutorPanel({
   isOpen,
   activeProblem,
   response,
-  messages,
   isLoading,
   error,
   tts,
@@ -89,7 +50,7 @@ export function TutorPanel({
   const userScrollIntentRef = useRef(false);
   const userScrollIntentTimeoutRef = useRef<number | null>(null);
   const autoScrollFrameRef = useRef<number | null>(null);
-  const visibleMessages = getVisibleMessages(messages, response);
+  const visibleMessages = response?.messages ?? [];
   const latestMessage = visibleMessages[visibleMessages.length - 1] ?? null;
   const latestTurnKey = `${latestMessage?.role ?? 'none'}:${latestMessage?.content ?? ''}:${isLoading ? 'loading' : 'idle'}`;
   const isReadAloudBusy = tts?.ttsStatus !== 'idle';
