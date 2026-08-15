@@ -7,6 +7,11 @@ import type { TimerConfig } from '../types/timer';
 import { Results } from './Results';
 import type { Theme } from '../hooks/useTheme';
 
+vi.mock('../lib/tutor/featureFlags', () => ({
+  isResultsTutorEnabled: () => true,
+  isTutorTtsEnabled: () => true,
+}));
+
 class MockTtsWorker {
   readonly postMessage = vi.fn((message: { id: number; type: string }) => {
     if (message.type === 'preload') {
@@ -108,12 +113,9 @@ describe('Results', () => {
   afterEach(() => {
     cleanup();
     vi.unstubAllGlobals();
-    vi.unstubAllEnvs();
   });
 
   beforeEach(() => {
-    vi.stubEnv('VITE_ENABLE_RESULTS_TUTOR', 'true');
-    vi.stubEnv('VITE_ENABLE_TUTOR_TTS', 'true');
     vi.stubGlobal('Worker', MockTtsWorker);
   });
 
