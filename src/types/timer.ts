@@ -16,14 +16,11 @@ export interface TimerState {
   timeRemaining: number;
   isRunning: boolean;
   currentProblemIndex: number;
-  problemStartTimes: number[];
   problemDurations: number[];
 }
 
 export interface TimedQuizResults {
   totalTime: number;
-  timePerProblem: number[];
-  timePerProblemMs?: number[];
   averagePace: number;
   timedOutProblems: number[];
 }

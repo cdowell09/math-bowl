@@ -17,10 +17,6 @@ function makeProblem(): TutorProblemContext {
 
 function makeResponse(): TutorResponse {
   return {
-    summary: 'Start by finding how much the pattern grows each time.',
-    hint: null,
-    nextQuestion: null,
-    workedExample: null,
     messages: [{ role: 'assistant', content: 'Start by finding how much the pattern grows each time.' }],
   };
 }
@@ -30,7 +26,6 @@ function makeProps(overrides: Partial<ComponentProps<typeof TutorPanel>> = {}): 
     isOpen: true,
     activeProblem: makeProblem(),
     response: makeResponse(),
-    messages: [{ role: 'assistant', content: 'Start by finding how much the pattern grows each time.' }],
     isLoading: false,
     error: null,
     tts: {
@@ -111,10 +106,12 @@ describe('TutorPanel', () => {
       rerender(
         <TutorPanel
           {...makeProps({
-            messages: [
-              { role: 'assistant', content: 'Start by finding how much the pattern grows each time.' },
-              { role: 'user', content: 'I think it goes up by 5.' },
-            ],
+            response: {
+              messages: [
+                { role: 'assistant', content: 'Start by finding how much the pattern grows each time.' },
+                { role: 'user', content: 'I think it goes up by 5.' },
+              ],
+            },
           })}
         />
       );
@@ -152,10 +149,12 @@ describe('TutorPanel', () => {
       rerender(
         <TutorPanel
           {...makeProps({
-            messages: [
-              { role: 'assistant', content: 'Start by finding how much the pattern grows each time.' },
-              { role: 'user', content: 'I think it goes up by 5.' },
-            ],
+            response: {
+              messages: [
+                { role: 'assistant', content: 'Start by finding how much the pattern grows each time.' },
+                { role: 'user', content: 'I think it goes up by 5.' },
+              ],
+            },
           })}
         />
       );
@@ -171,11 +170,13 @@ describe('TutorPanel', () => {
       rerender(
         <TutorPanel
           {...makeProps({
-            messages: [
-              { role: 'assistant', content: 'Start by finding how much the pattern grows each time.' },
-              { role: 'user', content: 'I think it goes up by 5.' },
-              { role: 'assistant', content: 'Exactly, now add 5 one more time.' },
-            ],
+            response: {
+              messages: [
+                { role: 'assistant', content: 'Start by finding how much the pattern grows each time.' },
+                { role: 'user', content: 'I think it goes up by 5.' },
+                { role: 'assistant', content: 'Exactly, now add 5 one more time.' },
+              ],
+            },
           })}
         />
       );
@@ -214,10 +215,12 @@ describe('TutorPanel', () => {
       rerender(
         <TutorPanel
           {...makeProps({
-            messages: [
-              { role: 'assistant', content: 'Start by finding how much the pattern grows each time.' },
-              { role: 'user', content: 'I think it goes up by 5.' },
-            ],
+            response: {
+              messages: [
+                { role: 'assistant', content: 'Start by finding how much the pattern grows each time.' },
+                { role: 'user', content: 'I think it goes up by 5.' },
+              ],
+            },
           })}
         />
       );
@@ -259,10 +262,12 @@ describe('TutorPanel', () => {
       rerender(
         <TutorPanel
           {...makeProps({
-            messages: [
-              { role: 'assistant', content: 'Start by finding how much the pattern grows each time.' },
-              { role: 'user', content: 'I think it goes up by 5.' },
-            ],
+            response: {
+              messages: [
+                { role: 'assistant', content: 'Start by finding how much the pattern grows each time.' },
+                { role: 'user', content: 'I think it goes up by 5.' },
+              ],
+            },
           })}
         />
       );

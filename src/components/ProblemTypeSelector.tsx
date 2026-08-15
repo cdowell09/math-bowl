@@ -29,18 +29,17 @@ function PrintIcon() {
 }
 
 export function ProblemTypeSelector({ grade, onSelect, onBack, onPrintWorksheet, onOpenMentalMathLibrary, timerConfig, onTimerToggle, onOpenTimerSettings, theme, onToggleTheme }: ProblemTypeSelectorProps) {
-  const handleSurpriseMe = () => {
-    const surpriseProblemType: ProblemType = {
-      id: 'surprise-me',
-      name: 'Surprise Me!',
-      description: 'A mix of all problem types',
-      generate: () => {
-        const randomType = grade.problemTypes[Math.floor(Math.random() * grade.problemTypes.length)];
-        return randomType.generate();
-      }
-    };
-    onSelect(surpriseProblemType);
+  const surpriseProblemType: ProblemType = {
+    id: 'surprise-me',
+    name: 'Surprise Me!',
+    description: 'A mix of all problem types',
+    generate: () => {
+      const randomType = grade.problemTypes[Math.floor(Math.random() * grade.problemTypes.length)];
+      return randomType.generate();
+    }
   };
+
+  const handleSurpriseMe = () => onSelect(surpriseProblemType);
 
   const handlePrintClick = (e: React.MouseEvent, pt: ProblemType) => {
     e.stopPropagation();
@@ -53,15 +52,6 @@ export function ProblemTypeSelector({ grade, onSelect, onBack, onPrintWorksheet,
 
   const handleSurpriseMePrint = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const surpriseProblemType: ProblemType = {
-      id: 'surprise-me',
-      name: 'Surprise Me!',
-      description: 'A mix of all problem types',
-      generate: () => {
-        const randomType = grade.problemTypes[Math.floor(Math.random() * grade.problemTypes.length)];
-        return randomType.generate();
-      }
-    };
     onPrintWorksheet({
       source: 'problemTypeSelector',
       grade,

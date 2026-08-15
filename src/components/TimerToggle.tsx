@@ -33,16 +33,15 @@ export function TimerToggle({ config, onToggle, onOpenSettings }: TimerTogglePro
         </span>
         <span className="timer-toggle-edit">Edit</span>
       </div>
-      <button
-        className={`timer-toggle-switch ${isEnabled ? 'timer-toggle-switch--on' : ''}`}
-        onClick={onToggle}
-        aria-label={isEnabled ? 'Turn timer off' : 'Turn timer on'}
-      >
-        <span className="timer-toggle-switch-track">
-          <span className="timer-toggle-switch-thumb" />
-        </span>
+      <label className={`timer-toggle-switch ${isEnabled ? 'timer-toggle-switch--on' : ''}`}>
+        <input
+          type="checkbox"
+          checked={isEnabled}
+          onChange={onToggle}
+          aria-label={isEnabled ? 'Turn timer off' : 'Turn timer on'}
+        />
         <span className="timer-toggle-switch-label">{isEnabled ? 'ON' : 'OFF'}</span>
-      </button>
+      </label>
     </div>
   );
 }

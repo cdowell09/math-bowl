@@ -59,10 +59,5 @@ export function useTimerSettings() {
     });
   }, []);
 
-  const resetConfig = useCallback(() => {
-    setConfig(DEFAULT_TIMER_CONFIG);
-    localStorage.removeItem(STORAGE_KEY);
-  }, []);
-
-  return { config, updateConfig, toggleTimer, resetConfig };
+  return { config, updateConfig, toggleTimer };
 }

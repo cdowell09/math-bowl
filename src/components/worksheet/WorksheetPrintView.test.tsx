@@ -5,12 +5,9 @@ import type { Worksheet } from '../../types/worksheet';
 
 function makeWorksheet(): Worksheet {
   return {
-    id: 'worksheet-1',
     title: 'Grade 4 - Elapsed Time',
     grade: 4,
-    gradeName: 'Grade 4',
     problemTypeId: 'elapsedTime',
-    problemTypeName: 'Elapsed Time',
     problems: [
       {
         id: 'problem-1',

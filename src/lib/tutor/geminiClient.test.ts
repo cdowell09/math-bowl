@@ -84,10 +84,6 @@ describe('requestGeminiTutor', () => {
         { fetchImpl: fetchImpl as typeof fetch }
       )
     ).resolves.toEqual({
-      summary: 'First sentence. Second sentence.',
-      hint: null,
-      nextQuestion: null,
-      workedExample: null,
       mode: 'live',
       fallbackReason: null,
       messages: [{ role: 'assistant', content: 'First sentence. Second sentence.' }],
@@ -104,18 +100,19 @@ describe('requestGeminiTutor', () => {
   });
 
   it('times out stalled provider calls', async () => {
-    vi.useFakeTimers();
     vi.stubEnv('GEMINI_API_KEY', 'test-key');
 
-    const fetchImpl = vi.fn(() => new Promise<Response>(() => {}));
-
-    const promise = requestGeminiTutor(
-      { system: 'system', user: 'user' },
-      { timeoutMs: 10, fetchImpl: fetchImpl as typeof fetch }
+    const fetchImpl = vi.fn((_input: RequestInfo | URL, init?: RequestInit) =>
+      new Promise<Response>((_resolve, reject) => {
+        init?.signal?.addEventListener('abort', () => reject(init.signal?.reason));
+      })
     );
 
-    const assertion = expect(promise).rejects.toThrow('Gemini request timed out');
-    await vi.advanceTimersByTimeAsync(10);
-    await assertion;
+    await expect(
+      requestGeminiTutor(
+        { system: 'system', user: 'user' },
+        { timeoutMs: 10, fetchImpl: fetchImpl as typeof fetch }
+      )
+    ).rejects.toThrow('Gemini request timed out');
   });
 });

@@ -5,12 +5,10 @@ import { useState } from 'react';
 import { Celebration } from './Celebration';
 import { TimedResults } from './TimedResults';
 import { TimerToggle } from './TimerToggle';
-import { PrintWorksheetButton } from './worksheet';
 import { Theme } from '../hooks/useTheme';
 import { ThemeToggle } from './ThemeToggle';
 import { useProblemTutor } from '../hooks/useProblemTutor';
 import { useTutorTts } from '../hooks/useTutorTts';
-import { ProblemTutorButton } from './ProblemTutorButton';
 import { TutorPanel } from './TutorPanel';
 import { isResultsTutorEnabled, isTutorTtsEnabled } from '../lib/tutor/featureFlags';
 import { getMentalMathGuideForProblem } from '../lib/mentalMath/guides';
@@ -160,7 +158,9 @@ export function Results({ score, total, problems, answers, onTryAgain, onBack, t
                       {tutorEnabled && (
                         <div className="result-followup-actions">
                           <span className="result-followup-prompt">Want a walkthrough?</span>
-                          <ProblemTutorButton
+                          <button
+                            type="button"
+                            className={`problem-tutor-button${isActiveProblem ? ' problem-tutor-button--active' : ''}`}
                             onClick={() => {
                               resolvedTts?.onStopPlayback();
                               setActiveTutorProblemId(problem.id);
@@ -172,8 +172,10 @@ export function Results({ score, total, problems, answers, onTryAgain, onBack, t
                                 studentAnswer: userAnswer,
                               });
                             }}
-                            isActive={isActiveProblem}
-                          />
+                            aria-pressed={isActiveProblem}
+                          >
+                            Get help from Torch
+                          </button>
                         </div>
                       )}
                     </div>
@@ -189,7 +191,8 @@ export function Results({ score, total, problems, answers, onTryAgain, onBack, t
             <button className="try-again-button" onClick={onTryAgain}>
               Try Again
             </button>
-            <PrintWorksheetButton
+            <button
+              className="print-worksheet-button"
               onClick={() =>
                 onPrintWorksheet({
                   source: 'results',
@@ -198,7 +201,10 @@ export function Results({ score, total, problems, answers, onTryAgain, onBack, t
                   existingProblems: problems,
                 })
               }
-            />
+              type="button"
+            >
+              Print Worksheet
+            </button>
           </div>
         </div>
 
@@ -207,7 +213,6 @@ export function Results({ score, total, problems, answers, onTryAgain, onBack, t
             isOpen={tutor.isOpen}
             activeProblem={tutor.activeProblem}
             response={tutor.response}
-            messages={tutor.messages}
             isLoading={tutor.isLoading}
             error={tutor.error}
             tts={resolvedTts}

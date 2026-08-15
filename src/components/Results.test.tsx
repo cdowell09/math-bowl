@@ -129,10 +129,6 @@ describe('Results', () => {
       vi.fn(async () => {
         return new Response(
           JSON.stringify({
-            summary: 'Start with the problem you picked.',
-            hint: null,
-            nextQuestion: null,
-            workedExample: null,
             messages: [{ role: 'assistant', content: 'Start with the problem you picked.' }],
           }),
           {
@@ -175,10 +171,6 @@ describe('Results', () => {
       vi.fn(async () => {
         return new Response(
           JSON.stringify({
-            summary: 'Start with the problem you picked.',
-            hint: null,
-            nextQuestion: null,
-            workedExample: null,
             messages: [{ role: 'assistant', content: 'Start with the problem you picked.' }],
           }),
           {
@@ -239,14 +231,10 @@ describe('Results', () => {
       vi.fn(async () => {
         return new Response(
           JSON.stringify({
-            summary: 'Try **subtracting 4** first.\n\n- Start with 9\n- Then subtract 4',
-            hint: 'What is `9 - 4`?',
-            nextQuestion: null,
-            workedExample: null,
             messages: [
               {
                 role: 'assistant',
-                content: 'Try **subtracting 4** first.\n\n- Start with 9\n- Then subtract 4',
+                content: 'Try **subtracting 4** first.\n\n- Start with 9\n- Then subtract 4\n\nWhat is `9 - 4`?',
               },
             ],
           }),
@@ -277,10 +265,6 @@ describe('Results', () => {
       vi.fn(async () => {
         return new Response(
           JSON.stringify({
-            summary: 'Break 52 + 26 into tens and ones.',
-            hint: null,
-            nextQuestion: null,
-            workedExample: null,
             messages: [{ role: 'assistant', content: 'Break 52 + 26 into tens and ones.' }],
           }),
           {
@@ -307,10 +291,6 @@ describe('Results', () => {
       vi.fn(async () => {
         return new Response(
           JSON.stringify({
-            summary: 'Let us compare your answer to the pattern.',
-            hint: null,
-            nextQuestion: null,
-            workedExample: null,
             messages: [{ role: 'assistant', content: 'Let us compare your answer to the pattern.' }],
           }),
           {
